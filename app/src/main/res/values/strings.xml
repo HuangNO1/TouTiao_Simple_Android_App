@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Toutiao</string>
+    <string name="app_name_cn">今日头条</string>
 </resources>
