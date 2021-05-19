@@ -14,7 +14,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+//        getSupportActionBar().hide();
         setContentView(R.layout.activity_welcome);
         LottieAnimationView animationView = (LottieAnimationView) findViewById(R.id.animation_view);
         animationView.setAnimation("news-icon-animation.json");
