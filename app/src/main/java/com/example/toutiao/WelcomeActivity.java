@@ -16,6 +16,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        getSupportActionBar().hide();
         setContentView(R.layout.activity_welcome);
+
         LottieAnimationView animationView = (LottieAnimationView) findViewById(R.id.animation_view);
         animationView.setAnimation("news-icon-animation.json");
         animationView.setSpeed(2);
