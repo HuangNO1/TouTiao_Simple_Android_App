@@ -8,13 +8,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.toutiao.R;
+import com.example.toutiao.ui.page.news_list.NewsListFragment;
+import com.example.toutiao.ui.page.news_list.SectionsPagerAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link com.example.toutiao.ui.home.HomeFragment#newInstance} factory method to
@@ -22,14 +30,14 @@ import com.example.toutiao.R;
  */
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+//    // TODO: Rename parameter arguments, choose names that match
+//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
+//
+//    // TODO: Rename and change types of parameters
+//    private String mParam1;
+//    private String mParam2;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -47,8 +55,8 @@ public class HomeFragment extends Fragment {
     public static com.example.toutiao.ui.account.AccountFragment newInstance(String param1, String param2) {
         com.example.toutiao.ui.account.AccountFragment fragment = new com.example.toutiao.ui.account.AccountFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+//        args.putString(ARG_PARAM1, param1);
+//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,16 +64,25 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+//        if (getArguments() != null) {
+//            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam2 = getArguments().getString(ARG_PARAM2);
+//        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Window window = getActivity().getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(container.getContext(), getChildFragmentManager());
+        ViewPager viewPager = view.findViewById(R.id.view_pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = view.findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
+        return view;
     }
 }
