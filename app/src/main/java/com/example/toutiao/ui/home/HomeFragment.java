@@ -81,4 +81,6 @@ public class HomeFragment extends Fragment {
         tabs.setupWithViewPager(viewPager);
         return view;
     }
+
+
 }

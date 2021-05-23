@@ -20,6 +20,7 @@
     <string name="title_news_sports">体育</string>
     <string name="title_news_finance">财经</string>
     <string name="title_digital">数码</string>
+    <string name="search_hint">输入内容进行搜索</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
