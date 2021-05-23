@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.page.news_list;
+package com.example.toutiao.ui.page.news_channel;
 
 import android.content.Context;
 
@@ -8,12 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.airbnb.lottie.animation.content.Content;
 import com.example.toutiao.R;
-import com.example.toutiao.ui.home.HomeFragment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -44,7 +39,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
-        return NewsListFragment.newInstance(position + 1);
+        return NewsChannelFragment.newInstance(position + 1);
     }
 
     @Nullable
@@ -55,8 +50,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
-        return 9;
+        // Show total pages.
+        return TAB_TITLES.length;
     }
 }
 

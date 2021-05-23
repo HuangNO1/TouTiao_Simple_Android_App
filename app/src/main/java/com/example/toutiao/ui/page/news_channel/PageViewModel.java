@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.page.news_list;
+package com.example.toutiao.ui.page.news_channel;
 
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;

@@ -1,13 +1,11 @@
 package com.example.toutiao.ui.home;
 
+import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
@@ -15,12 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.example.toutiao.R;
-import com.example.toutiao.ui.page.news_list.NewsListFragment;
-import com.example.toutiao.ui.page.news_list.SectionsPagerAdapter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.toutiao.ui.page.news_channel.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 /**
