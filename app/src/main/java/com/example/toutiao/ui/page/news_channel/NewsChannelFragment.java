@@ -79,6 +79,15 @@ public class NewsChannelFragment extends Fragment {
             }
         });
 
+        renderCardList(view, container);
+
+        // Inflate the layout for this fragment
+        return view;
+    }
+
+    // render the recycler view card list
+    public void renderCardList(View view, ViewGroup container) {
+        // cardList
         mRecyclerView = view.findViewById(R.id.recycler_view);
 
         List<DataModel> dataModelList = new ArrayList<>();
@@ -103,8 +112,5 @@ public class NewsChannelFragment extends Fragment {
 
         mAdapter = new CardTestAdapter(dataModelList, container.getContext());
         mRecyclerView.setAdapter(mAdapter);
-
-        // Inflate the layout for this fragment
-        return view;
     }
 }

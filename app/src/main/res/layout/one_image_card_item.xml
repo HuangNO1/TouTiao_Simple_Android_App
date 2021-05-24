@@ -9,11 +9,14 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,17 +26,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3">
-                <TextView
-                    android:id="@+id/card_title"
-                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                <LinearLayout
+                    android:id="@+id/title_bar"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Title goes here"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:ignore="MissingConstraints" />
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginEnd="10dp"
+                        tools:srcCompat="@drawable/avatar_1"
+                        tools:ignore="MissingConstraints" />
+
+                    <TextView
+                        android:id="@+id/card_title"
+                        style="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Title goes here"
+
+                        app:layout_constraintBottom_toTopOf="@+id/avatar"
+                        app:layout_constraintStart_toEndOf="@+id/avatar"
+                        app:layout_constraintTop_toBottomOf="@+id/avatar"
+                        tools:ignore="MissingConstraints" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/card_subtitle"
@@ -42,11 +59,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Subtitle goes here"
-                    app:layout_constraintStart_toStartOf="@+id/card_title"
-                    app:layout_constraintTop_toBottomOf="@+id/card_title" />
+                    app:layout_constraintStart_toStartOf="@+id/title_bar"
+                    app:layout_constraintTop_toBottomOf="@+id/title_bar" />
 
                 <TextView
-                    android:id="@+id/card_bottom"
+                    android:id="@+id/card_bottom_text"
                     style="@style/TextAppearance.MaterialComponents.Overline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -68,5 +85,5 @@
         </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

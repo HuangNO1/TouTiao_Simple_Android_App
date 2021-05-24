@@ -15,6 +15,10 @@ public class DataModel {
         subTitle = String.format(Locale.ENGLISH, "Sub title %d goes here", id);
     }
 
+    public DataModel() {
+
+    }
+
     public int getImageDrawable() {
         return imageDrawable;
     }
