@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.card;
+package com.example.toutiao.ui.card.card_list;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,13 +12,14 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.toutiao.R;
-import com.example.toutiao.ui.card.dataModel.NoImageDataModel;
-import com.example.toutiao.ui.card.dataModel.OneImageDataModel;
-import com.example.toutiao.ui.card.dataModel.ThreeImageDataModel;
+import com.example.toutiao.ui.card.card_list.CardItemDataModel;
 
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private List<CardItemDataModel> dataModelList;
+    private Context mContext;
+
     class NoImageCardViewHolder extends RecyclerView.ViewHolder {
         public ImageView avatarView;
         public TextView titleTextView;
@@ -33,7 +34,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
         }
 
-        public void bindData(NoImageDataModel dataModel, Context context) {
+        public void bindData(CardItemDataModel dataModel, Context context) {
             avatarView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.avatar_1));
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
@@ -57,7 +58,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
         }
 
-        public void bindData(OneImageDataModel dataModel, Context context) {
+        public void bindData(CardItemDataModel dataModel, Context context) {
             avatarView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.avatar_1));
             cardImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
             titleTextView.setText(dataModel.getTitle());
@@ -86,7 +87,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
         }
 
-        public void bindData(ThreeImageDataModel dataModel, Context context) {
+        public void bindData(CardItemDataModel dataModel, Context context) {
             avatarView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.avatar_1));
             cardImageView1.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
             cardImageView2.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
@@ -98,15 +99,27 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public int getItemViewType(int position) {
-        // Just as an example, return 0 or 2 depending on position
-        // Note that unlike in ListView adapters, types don't have to be contiguous
-        return position % 3;
+    public int getItemViewType(final int position) {
+        switch(dataModelList.get(position).getItemType()) {
+            case CardItemDataModel.NO_IMAGE_TYPE:
+                return CardItemDataModel.NO_IMAGE_TYPE;
+            case CardItemDataModel.ONE_IMAGE_TYPE:
+                return CardItemDataModel.ONE_IMAGE_TYPE;
+            case CardItemDataModel.THREE_IMAGE_TYPE:
+                return CardItemDataModel.THREE_IMAGE_TYPE;
+            default:
+                return -1;
+        }
+    }
+
+    public CardAdapter(List<CardItemDataModel> modelList, Context context) {
+        dataModelList = modelList;
+        mContext = context;
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return dataModelList.size();
     }
 
     @NonNull
@@ -114,33 +127,45 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
-            case 0:
+            case CardItemDataModel.NO_IMAGE_TYPE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.no_image_card_item, parent, false);
                 return new NoImageCardViewHolder(view);
-            case 1:
+            case CardItemDataModel.ONE_IMAGE_TYPE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.one_image_card_item, parent, false);
                 return new OneImageCardViewHolder(view);
-            case 2:
+            case CardItemDataModel.THREE_IMAGE_TYPE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.three_images_card_item, parent, false);
                 return new ThreeImageCardViewHolder(view);
+            default:
+                return null;
         }
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        switch (holder.getItemViewType()) {
-            case 0:
-                ViewHolder0 viewHolder0 = (ViewHolder0)holder;
-                ...
-                break;
+        CardItemDataModel object = dataModelList.get(position);
 
-            case 2:
-                ViewHolder2 viewHolder2 = (ViewHolder2)holder;
-                ...
-                break;
+        if(object != null) {
+            switch (object.getItemType()) {
+                case CardItemDataModel.NO_IMAGE_TYPE:
+                    NoImageCardViewHolder holder1 = (NoImageCardViewHolder)holder;
+                    holder1.bindData(object, mContext);
+                    break;
+
+                case CardItemDataModel.ONE_IMAGE_TYPE:
+                    OneImageCardViewHolder holder2 = (OneImageCardViewHolder)holder;
+                    holder2.bindData(object, mContext);
+                    break;
+                case CardItemDataModel.THREE_IMAGE_TYPE:
+                    ThreeImageCardViewHolder holder3 = (ThreeImageCardViewHolder)holder;
+                    holder3.bindData(object, mContext);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

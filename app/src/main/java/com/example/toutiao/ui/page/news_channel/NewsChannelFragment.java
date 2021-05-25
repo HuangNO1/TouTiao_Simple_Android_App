@@ -1,10 +1,8 @@
 package com.example.toutiao.ui.page.news_channel;
 
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,12 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.toutiao.R;
-import com.example.toutiao.ui.card.card_test.CardTestAdapter;
-import com.example.toutiao.ui.card.card_test.DataModel;
+import com.example.toutiao.ui.card.card_list.CardAdapter;
+import com.example.toutiao.ui.card.card_list.CardItemDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,10 +87,17 @@ public class NewsChannelFragment extends Fragment {
         // cardList
         mRecyclerView = view.findViewById(R.id.recycler_view);
 
-        List<DataModel> dataModelList = new ArrayList<>();
-        for (int i = 1; i <= 20; ++i) {
-            dataModelList.add(new DataModel(i));
-        }
+        List<CardItemDataModel> dataModelList = new ArrayList<>();
+//        for (int i = 1; i <= 20; ++i) {
+//            dataModelList.add(new DataModel(i));
+//        }
+        dataModelList.add(new CardItemDataModel(0, 1));
+        dataModelList.add(new CardItemDataModel(1, 0));
+        dataModelList.add(new CardItemDataModel(2, 2));
+        dataModelList.add(new CardItemDataModel(3, 1));
+        dataModelList.add(new CardItemDataModel(4, 0));
+
+
 
         // use this setting to improve performance if you know that changes
 
@@ -110,7 +114,7 @@ public class NewsChannelFragment extends Fragment {
 
         // specify an adapter and pass in our data model list
 
-        mAdapter = new CardTestAdapter(dataModelList, container.getContext());
+        mAdapter = new CardAdapter(dataModelList, container.getContext());
         mRecyclerView.setAdapter(mAdapter);
     }
 }
