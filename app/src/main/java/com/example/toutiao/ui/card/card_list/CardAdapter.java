@@ -1,18 +1,18 @@
 package com.example.toutiao.ui.card.card_list;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.toutiao.R;
-import com.example.toutiao.ui.card.card_list.CardItemDataModel;
+import com.example.toutiao.activity.NewsDetailActivity;
 
 import java.util.List;
 
@@ -32,6 +32,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             titleTextView = itemView.findViewById(R.id.card_title);
             subTitleTextView = itemView.findViewById(R.id.card_subtitle);
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
+
+            onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
@@ -56,6 +58,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             titleTextView = itemView.findViewById(R.id.card_title);
             subTitleTextView = itemView.findViewById(R.id.card_subtitle);
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
+
+            onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
@@ -85,6 +89,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             titleTextView = itemView.findViewById(R.id.card_title);
             subTitleTextView = itemView.findViewById(R.id.card_subtitle);
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
+
+            onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
@@ -96,6 +102,19 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
         }
+    }
+
+    // Click the card item and move to NewsDetailActivity
+    public void onClickListener(@NonNull View itemView) {
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity activity = (Activity) mContext;
+                Intent intent = new Intent(activity,NewsDetailActivity.class);
+                mContext.startActivity(intent);
+                activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+            }
+        });
     }
 
     @Override

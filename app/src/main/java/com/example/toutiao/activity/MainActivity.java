@@ -1,4 +1,4 @@
-package com.example.toutiao;
+package com.example.toutiao.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.toutiao.R;
 import com.example.toutiao.ui.account.AccountFragment;
 import com.example.toutiao.ui.home.HomeFragment;
 import com.example.toutiao.ui.video.VideoFragment;

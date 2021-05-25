@@ -1,4 +1,4 @@
-package com.example.toutiao;
+package com.example.toutiao.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.example.toutiao.R;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -32,7 +33,7 @@ public class WelcomeActivity extends AppCompatActivity {
             switch (msg.what) {
                 case GOTO_MAIN_ACTIVITY:
                     Intent intent = new Intent();
-                    //將原本Activity的換成MainActivity
+                    //將原本 Activity 的換成 MainActivity
                     intent.setClass(WelcomeActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

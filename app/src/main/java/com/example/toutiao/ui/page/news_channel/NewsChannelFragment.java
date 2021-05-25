@@ -96,6 +96,12 @@ public class NewsChannelFragment extends Fragment {
         dataModelList.add(new CardItemDataModel(2, 2));
         dataModelList.add(new CardItemDataModel(3, 1));
         dataModelList.add(new CardItemDataModel(4, 0));
+        dataModelList.add(new CardItemDataModel(5, 2));
+        dataModelList.add(new CardItemDataModel(6, 2));
+        dataModelList.add(new CardItemDataModel(7, 2));
+        dataModelList.add(new CardItemDataModel(8, 2));
+        dataModelList.add(new CardItemDataModel(9, 2));
+        dataModelList.add(new CardItemDataModel(10, 2));
 
 
 
