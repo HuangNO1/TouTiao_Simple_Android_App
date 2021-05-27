@@ -30,6 +30,12 @@ public class NewsDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
 
+        Bundle b = getIntent().getExtras();
+        String url = "";
+        if(b != null) {
+            url = b.getString("source_url");
+        }
+
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
@@ -38,7 +44,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setMax(100);
         progressBar.setProgress(1);
-        setNewsDetailWebView("https://m.toutiao.com/group/6954186307694232097/");
+        setNewsDetailWebView("https://m.toutiao.com" + url);
 
         backButton = findViewById(R.id.backButton);
         backButtonOnClick();

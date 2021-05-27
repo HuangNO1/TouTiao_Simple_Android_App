@@ -3,6 +3,7 @@ package com.example.toutiao.ui.card.card_list;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.toutiao.R;
 import com.example.toutiao.activity.NewsDetailActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,6 +27,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView titleTextView;
         public TextView subTitleTextView;
         public TextView bottomTextView;
+        public TextView sourceUrlTextView;
 
         public NoImageCardViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -32,15 +35,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             titleTextView = itemView.findViewById(R.id.card_title);
             subTitleTextView = itemView.findViewById(R.id.card_subtitle);
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
+            sourceUrlTextView =  itemView.findViewById(R.id.source_url);
 
             onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            avatarView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.avatar_1));
+            avatarView.setImageBitmap(dataModel.getAvatar());
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
+            sourceUrlTextView.setText(dataModel.getDetailUrl());
         }
     }
 
@@ -50,6 +55,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView titleTextView;
         public TextView subTitleTextView;
         public TextView bottomTextView;
+        public TextView sourceUrlTextView;
 
         public OneImageCardViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -58,16 +64,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             titleTextView = itemView.findViewById(R.id.card_title);
             subTitleTextView = itemView.findViewById(R.id.card_subtitle);
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
+            sourceUrlTextView =  itemView.findViewById(R.id.source_url);
 
             onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            avatarView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.avatar_1));
-            cardImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
+            avatarView.setImageBitmap(dataModel.getAvatar());
+            cardImageView.setImageBitmap(dataModel.getImageDrawable());
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
+            sourceUrlTextView.setText(dataModel.getDetailUrl());
         }
     }
 
@@ -79,6 +87,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView titleTextView;
         public TextView subTitleTextView;
         public TextView bottomTextView;
+        public TextView sourceUrlTextView;
 
         public ThreeImageCardViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,18 +98,21 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             titleTextView = itemView.findViewById(R.id.card_title);
             subTitleTextView = itemView.findViewById(R.id.card_subtitle);
             bottomTextView = itemView.findViewById(R.id.card_bottom_text);
+            sourceUrlTextView =  itemView.findViewById(R.id.source_url);
 
             onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            avatarView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.avatar_1));
-            cardImageView1.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
-            cardImageView2.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
-            cardImageView3.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
+            avatarView.setImageBitmap(dataModel.getAvatar());
+            ArrayList<Bitmap> images = dataModel.getThreeImageDrawable();
+            cardImageView1.setImageBitmap(images.get(0));
+            cardImageView2.setImageBitmap(images.get(1));
+            cardImageView3.setImageBitmap(images.get(2));
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
+            sourceUrlTextView.setText(dataModel.getDetailUrl());
         }
     }
 
@@ -110,7 +122,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Activity activity = (Activity) mContext;
+                TextView source_url = itemView.findViewById(R.id.source_url);
                 Intent intent = new Intent(activity,NewsDetailActivity.class);
+                intent.putExtra("source_url", source_url.getText().toString());
                 mContext.startActivity(intent);
                 activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
             }

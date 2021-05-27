@@ -52,8 +52,8 @@ public class NewsRequest {
         Response response;
 
         ArrayList<NewsDataModel> newsDataModelList = new ArrayList<>();
-
         try {
+
             response = call.execute();
             if (response.isSuccessful()) {
                 JSONObject jsonObject = new JSONObject(new Gson().toJson(response.body()));
@@ -75,7 +75,7 @@ public class NewsRequest {
 
     }
 
-    public NewsDataModel dealWithNewsObject(JSONObject object) throws JSONException {
+    public NewsDataModel dealWithNewsObject(JSONObject object) throws JSONException, IOException {
         NewsDataModel temp;
 
         String news_id = object.getString("group_id");
@@ -138,38 +138,47 @@ public class NewsRequest {
         return temp;
     }
 
-    public Bitmap cacheImage(String image_url) {
+    public Bitmap cacheImage(String image_url) throws IOException {
         int cacheSize = 10 * 1024 * 1024; // 10 MiB
         File cacheDirectory = new File(mContext.getCacheDir(), "http");
         Cache cache = new Cache(cacheDirectory, cacheSize);
         OkHttpClient client = new OkHttpClient.Builder().cache(cache).build();
-        final Bitmap[] bitmap = new Bitmap[1];
+        Bitmap bitmap = null;
 
         Request request = new Request.Builder()
                 .get()
                 .url(String.format(Locale.ENGLISH, "http://%s", image_url))
                 .build();
         Call call = client.newCall(request);
+        Response response;
+        response = call.execute();
+        ResponseBody body = response.body();
+        if (response.isSuccessful() && body != null) {
+            InputStream is = body.byteStream();
+            bitmap = BitmapFactory.decodeStream(is);
+        } else {
+            Log.d("error", "Retrofit onResponse(): CODE = [" + response.code() + "], MESSAGE = [" + response.message() + "]");
+        }
+        return bitmap;
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                ResponseBody body = response.body();
-                if (response.isSuccessful() && body != null) {
-                    InputStream is = body.byteStream();
-                    bitmap[0] = BitmapFactory.decodeStream(is);
-
-                } else {
-                    Log.d("error", "Retrofit onResponse(): CODE = [" + response.code() + "], MESSAGE = [" + response.message() + "]");
-                }
-            }
-        });
-        return bitmap[0];
+//        client.newCall(request).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                ResponseBody body = response.body();
+//                if (response.isSuccessful() && body != null) {
+//                    InputStream is = body.byteStream();
+//                    bitmap[0] = BitmapFactory.decodeStream(is);
+//
+//                } else {
+//                    Log.d("error", "Retrofit onResponse(): CODE = [" + response.code() + "], MESSAGE = [" + response.message() + "]");
+//                }
+//            }
+//        });
     }
 
 }

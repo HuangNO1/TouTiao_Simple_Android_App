@@ -13,11 +13,7 @@
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        android:visibility="gone"/>
     <!-- Recycler View widget-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

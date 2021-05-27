@@ -125,4 +125,16 @@ public class NewsDataModel {
     public ArrayList<Bitmap> getNews_three_image() {
         return news_three_image;
     }
+
+    public void setNews_media_avatar_url(Bitmap news_media_avatar_url) {
+        this.news_media_avatar_url = news_media_avatar_url;
+    }
+
+    public void setNews_image_url(Bitmap news_image_url) {
+        this.news_image_url = news_image_url;
+    }
+
+    public void setNews_three_image(Bitmap news_image_url) {
+        this.news_three_image.add(news_image_url);
+    }
 }

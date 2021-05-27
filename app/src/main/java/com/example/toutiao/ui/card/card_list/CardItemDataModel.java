@@ -1,5 +1,7 @@
 package com.example.toutiao.ui.card.card_list;
 
+import android.graphics.Bitmap;
+
 import com.example.toutiao.R;
 
 import java.util.ArrayList;
@@ -11,37 +13,84 @@ public class CardItemDataModel {
     public static final int THREE_IMAGE_TYPE = 2;
 
     private int itemType;
-    private int avatar;
-    private ArrayList<Integer> threeImageDrawable;
-    private int imageDrawable;
+    private String id;
+    private Bitmap avatar;
+    private ArrayList<Bitmap> threeImageDrawable;
+    private Bitmap imageDrawable;
     private String title;
     private String subTitle;
     private String bottomText;
+    private String detailUrl;
 
-    public CardItemDataModel(int id, int itemType) {
+    // no image style
+    public CardItemDataModel(int itemType,
+                             String id,
+                             String news_title,
+                             String news_abstract,
+                             int news_comments_count,
+                             String news_source,
+                             Bitmap news_media_avatar_url,
+                             String news_source_url
+    ) {
         this.itemType = itemType;
-        switch (itemType) {
-            case NO_IMAGE_TYPE:
-                break;
-            case ONE_IMAGE_TYPE:
-                imageDrawable = R.drawable.rem_blog;
-                break;
-            case THREE_IMAGE_TYPE:
-                threeImageDrawable = new ArrayList<>();
-                threeImageDrawable.add(R.drawable.rem_blog);
-                threeImageDrawable.add(R.drawable.rem_blog);
-                threeImageDrawable.add(R.drawable.rem_blog);
-                break;
-            default:
-                break;
-        }
-        avatar = R.drawable.avatar_1;
-        title = String.format(Locale.CHINESE, "Title %d Goes Here", id);
-        subTitle = String.format(Locale.CHINESE, "Sub title %d goes here", id);
-        bottomText = String.format(Locale.CHINESE, "%d Comments", id);
+        this.id = id;
+        avatar = news_media_avatar_url;
+        title = String.format(Locale.CHINESE, "%s", news_title);
+        subTitle = String.format(Locale.CHINESE, "%s", news_abstract);
+        bottomText = String.format(Locale.CHINESE, "%s  %d 评论", news_source, news_comments_count);
+        detailUrl = news_source_url;
     }
 
-    public int getAvatar() {
+
+    // one image style
+    public CardItemDataModel(int itemType,
+                             String id,
+                             String news_title,
+                             String news_abstract,
+                             int news_comments_count,
+                             String news_source,
+                             Bitmap news_media_avatar_url,
+                             String news_source_url,
+                             Bitmap imageDrawable
+    ) {
+        this.itemType = itemType;
+        this.id = id;
+        avatar = news_media_avatar_url;
+        title = String.format(Locale.CHINESE, "%s", news_title);
+        subTitle = String.format(Locale.CHINESE, "%s", news_abstract);
+        bottomText = String.format(Locale.CHINESE, "%s  %d 评论", news_source, news_comments_count);
+        detailUrl = news_source_url;
+        // one
+        this.imageDrawable = imageDrawable;
+    }
+
+    // three image style
+    public CardItemDataModel(int itemType,
+                             String id,
+                             String news_title,
+                             String news_abstract,
+                             int news_comments_count,
+                             String news_source,
+                             Bitmap news_media_avatar_url,
+                             String news_source_url,
+                             ArrayList<Bitmap> threeImageDrawable
+    ) {
+        this.itemType = itemType;
+        this.id = id;
+        avatar = news_media_avatar_url;
+        title = String.format(Locale.CHINESE, "%s", news_title);
+        subTitle = String.format(Locale.CHINESE, "%s", news_abstract);
+        bottomText = String.format(Locale.CHINESE, "%s  %d 评论", news_source, news_comments_count);
+        detailUrl = news_source_url;
+        // three
+        this.threeImageDrawable = threeImageDrawable;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Bitmap getAvatar() {
         return avatar;
     }
 
@@ -61,11 +110,15 @@ public class CardItemDataModel {
         return itemType;
     }
 
-    public ArrayList<Integer> getThreeImageDrawable() {
+    public ArrayList<Bitmap> getThreeImageDrawable() {
         return threeImageDrawable;
     }
 
-    public int getImageDrawable() {
+    public Bitmap getImageDrawable() {
         return imageDrawable;
+    }
+
+    public String getDetailUrl() {
+        return detailUrl;
     }
 }
