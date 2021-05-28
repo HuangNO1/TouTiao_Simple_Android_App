@@ -44,8 +44,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public void bindData(CardItemDataModel dataModel, Context context) {
             Picasso.get().load(dataModel.getAvatar()).into(avatarView);
-            titleTextView.setText(dataModel.getTitle());
-            subTitleTextView.setText(dataModel.getSubTitle());
+            String title = dataModel.getTitle();
+            if(title.length() > 15) {
+                title = title.substring(0, 16);
+                title += "...";
+            }
+            titleTextView.setText(title);
+            String subTitle = dataModel.getSubTitle();
+            if(subTitle.length() > 70) {
+                subTitle = subTitle.substring(0, 69);
+                subTitle += "...";
+            }
+            subTitleTextView.setText(subTitle);
             bottomTextView.setText(dataModel.getBottomText());
             sourceUrlTextView.setText(dataModel.getDetailUrl());
         }
@@ -74,8 +84,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void bindData(CardItemDataModel dataModel, Context context) {
             Picasso.get().load(dataModel.getAvatar()).into(avatarView);
             Picasso.get().load(dataModel.getImageDrawable()).into(cardImageView);
-            titleTextView.setText(dataModel.getTitle());
-            subTitleTextView.setText(dataModel.getSubTitle());
+            String title = dataModel.getTitle();
+            if(title.length() > 15) {
+                title = title.substring(0, 14);
+                title += "...";
+            }
+            titleTextView.setText(title);
+            String subTitle = dataModel.getSubTitle();
+            if(subTitle.length() > 70) {
+                subTitle = subTitle.substring(0, 69);
+                subTitle += "...";
+            }
+            subTitleTextView.setText(subTitle);
             bottomTextView.setText(dataModel.getBottomText());
             sourceUrlTextView.setText(dataModel.getDetailUrl());
         }
@@ -111,8 +131,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Picasso.get().load(images.get(0)).into(cardImageView1);
             Picasso.get().load(images.get(1)).into(cardImageView2);
             Picasso.get().load(images.get(2)).into(cardImageView3);
-            titleTextView.setText(dataModel.getTitle());
-            subTitleTextView.setText(dataModel.getSubTitle());
+            String title = dataModel.getTitle();
+            if(title.length() > 15) {
+                title = title.substring(0, 16);
+                title += "...";
+            }
+            titleTextView.setText(title);
+            String subTitle = dataModel.getSubTitle();
+            if(subTitle.length() > 70) {
+                subTitle = subTitle.substring(0, 69);
+                subTitle += "...";
+            }
+            subTitleTextView.setText(subTitle);
             bottomTextView.setText(dataModel.getBottomText());
             sourceUrlTextView.setText(dataModel.getDetailUrl());
         }

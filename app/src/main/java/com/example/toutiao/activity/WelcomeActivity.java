@@ -23,7 +23,7 @@ public class WelcomeActivity extends AppCompatActivity {
         Window window = this.getWindow();
         window.getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
-        LottieAnimationView animationView = (LottieAnimationView) findViewById(R.id.animation_view);
+        LottieAnimationView animationView = findViewById(R.id.animation_view);
         animationView.setAnimation("news-icon-animation.json");
         animationView.setSpeed(2);
         animationView.playAnimation();

@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
 
 public class NewsDetailActivity extends AppCompatActivity {
@@ -23,6 +24,7 @@ public class NewsDetailActivity extends AppCompatActivity {
     WebView NewsDetailWebView;
     ProgressBar progressBar;
     Button backButton;
+    LottieAnimationView animationView;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -39,6 +41,11 @@ public class NewsDetailActivity extends AppCompatActivity {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
+
+        animationView = findViewById(R.id.animation_view);
+        animationView.setAnimation("load-animation.json");
+        animationView.setSpeed(1);
+        animationView.playAnimation();
 
         NewsDetailWebView = findViewById(R.id.webView);
         progressBar = findViewById(R.id.progressBar);
@@ -69,6 +76,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
+                animationView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
             }
         });

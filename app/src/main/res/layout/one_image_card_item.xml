@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp">
@@ -52,43 +52,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints">
-
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/card_subtitle"
+                style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/card_subtitle"
-                    style="@style/TextAppearance.MaterialComponents.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:layout_marginTop="8dp"
-                    android:text="Subtitle goes here" />
-
-                <TextView
-                    android:id="@+id/card_bottom_text"
-                    style="@style/TextAppearance.MaterialComponents.Overline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="comment"
-                    android:layout_weight="1"
-                    app:layout_constraintBottom_toBottomOf="@+id/card_container"
-                    app:layout_constraintStart_toStartOf="@+id/card_subtitle" />
-            </LinearLayout>
+                android:layout_marginTop="8dp"
+                android:text="Subtitle goes here" />
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="120dp"
                 android:layout_height="80dp"
                 android:adjustViewBounds="true"
+                android:layout_marginStart="5dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/rem_blog" />
         </LinearLayout>
+        <TextView
+            android:id="@+id/card_bottom_text"
+            style="@style/TextAppearance.MaterialComponents.Overline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="comment"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="@+id/card_container"
+            app:layout_constraintStart_toStartOf="@+id/card_subtitle" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

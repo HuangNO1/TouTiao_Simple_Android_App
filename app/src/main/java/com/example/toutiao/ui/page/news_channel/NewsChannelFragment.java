@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.card_list.CardAdapter;
@@ -62,6 +63,7 @@ public class NewsChannelFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    LottieAnimationView animationView;
 
     private List<CardItemDataModel> dataModelList = new ArrayList<>();
     private String category;
@@ -101,6 +103,10 @@ public class NewsChannelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
+        animationView = view.findViewById(R.id.animation_view);
+        animationView.setAnimation("load-animation.json");
+        animationView.setSpeed(1);
+        animationView.playAnimation();
         // cardList
         mRecyclerView = view.findViewById(R.id.recycler_view);
 
@@ -190,6 +196,7 @@ public class NewsChannelFragment extends Fragment {
                 ));
             }
         }
+        animationView.setVisibility(View.GONE);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -223,25 +230,6 @@ public class NewsChannelFragment extends Fragment {
                 .url(String.format(Locale.ENGLISH, base_url, max_behot_time, category_attr[index]))
                 .build();
         Call call = client.newCall(request);
-//        Response response;
-//
-//        response = call.execute();
-//        if (response.isSuccessful()) {
-//            System.out.println("response body");
-//            String jsonData = response.body().string();
-//            System.out.println("string to JsonObject");
-//            this.result = JsonParser.parseString(jsonData).getAsJsonObject();
-//            System.out.println("result, before max_behot_time " + this.max_behot_time);
-//            System.out.println(this.result.getAsJsonObject("next").has("max_behot_time"));
-//            this.max_behot_time = this.result.getAsJsonObject("next").get("max_behot_time").getAsInt();
-//            System.out.println("After max_behot_time : " + this.max_behot_time + " get news object");
-//            news_data = this.result.getAsJsonArray("data");
-//            for (int i = 0; i < news_data.size(); i++) {
-//                System.out.println("newsObjects " + i);
-//                dealWithNewsObject(news_data.get(i).getAsJsonObject());
-//            }
-//            renderCardList();
-//        }
 
         call.enqueue(new Callback() {
             @Override
@@ -365,137 +353,5 @@ public class NewsChannelFragment extends Fragment {
         }
         newsDataModelList.add(temp);
     }
-
-//    public void dealWithImages() throws IOException {
-//        String image_url;
-//        System.out.println("news data size: " + news_data.size());
-//        int max = news_data.size();
-//        for (int i = 0; i < max; i++) {
-//            System.out.println("------------\ndeal with news object " + i);
-//            JsonObject object = news_data.get(i).getAsJsonObject();
-//            System.out.println("has() avatar url : " + object.has("media_avatar_url"));
-//            image_url = "https:" + object.get("media_avatar_url").getAsString();
-//
-//            cacheImage(image_url, i, 0);
-//
-//            // deal with card style
-//            if (object.has("image_list")) {
-//                JsonArray image_list = object.get("image_list").getAsJsonArray();
-//                int image_list_max = image_list.size();
-//                System.out.println("is image list , size: " + image_list_max);
-//                threeImageFor(image_list, i, image_list_max);
-//            }
-//            // one image style
-//            else if (object.get("single_mode").getAsBoolean()) {
-//                System.out.println("is one image, has() : " + object.has("image_url"));
-//                image_url = "https:" + object.get("image_url").getAsString();
-////                        System.out.println("image url : " + image_url);
-//                cacheImage(image_url, i, 1);
-//            } else {
-//                System.out.println("no image");
-//            }
-//        }
-//    }
-
-//    public void threeImageFor(JsonArray image_list, final int index, final int size) throws IOException {
-//        String image_url;
-//        // System.out.println(image_list.toString());
-//        for (int j = 0; j < size; j++) {
-//            System.out.println("three image list " + j);
-//            System.out.println("has() : " + image_list.get(j).getAsJsonObject().has("url"));
-//            JsonObject image = image_list.get(j).getAsJsonObject();
-//            image_url = "https:" + image.get("url").getAsString();
-////                            System.out.println("image list "+ i +" url : " + image_url);
-//            cacheImage(image_url, index, 2);
-//            System.out.println("finish image list " + j);
-//        }
-//    }
-
-//    public void cacheImage(final String image_url, final int index, final int type) throws IOException {
-//        System.out.println("image_url : " + image_url + ", index: " + index + ", type: " + type);
-//        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-//        File cacheDirectory = new File(getContext().getCacheDir(), "cache");
-//        Cache cache = new Cache(cacheDirectory, cacheSize);
-//        OkHttpClient client = new OkHttpClient.Builder().cache(cache).build();
-//        Bitmap bitmap = null;
-//
-//        Request request = new Request.Builder()
-//                .get()
-//                .url(image_url)
-//                .build();
-//        Call call = client.newCall(request);
-//        Response response;
-//        response = call.execute();
-//        if (response.isSuccessful()) {
-//            System.out.println("get inputStream from response body byteStream");
-//            InputStream is = response.body().byteStream();
-//            bitmap = BitmapFactory.decodeStream(is);
-//            switch (type) {
-//                case 0:
-//                    System.out.println("save avatar");
-//                    newsDataModelList.get(index).setNews_media_avatar_url(bitmap);
-//                    break;
-//                case 1:
-//                    System.out.println("save image");
-//                    newsDataModelList.get(index).setNews_image_url(bitmap);
-//                    break;
-//                case 2:
-//                    System.out.println("save image list");
-//                    //System.out.println("before size: " + newsDataModelList.get(index).getNews_three_image().size());
-//                    //newsDataModelList.get(index).setNews_three_image(bitmap);
-//                    //System.out.println("after size: " + newsDataModelList.get(index).getNews_three_image().size());
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    }
-
-//    public class GetNewsItemTask extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            try {
-//                getInitNews();
-//            } catch (IOException | JSONException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void unused) {
-//            System.out.println("finish Task 1");
-////            new getImagesTask().execute();
-////            renderCardList();
-//        }
-//
-//
-//    }
-
-//    public class getImagesTask extends AsyncTask<Void, Void, Void> {
-//
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            System.out.println("execute Task 2");
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            try {
-//                dealWithImages();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void unused) {
-//            System.out.println("Finish Task2, start render Card List");
-//            renderCardList();
-//        }
-//    }
 
 }
