@@ -14,9 +14,9 @@ public class CardItemDataModel {
 
     private int itemType;
     private String id;
-    private Bitmap avatar;
-    private ArrayList<Bitmap> threeImageDrawable;
-    private Bitmap imageDrawable;
+    private String avatar;
+    private ArrayList<String> threeImageDrawable;
+    private String imageDrawable;
     private String title;
     private String subTitle;
     private String bottomText;
@@ -29,7 +29,7 @@ public class CardItemDataModel {
                              String news_abstract,
                              int news_comments_count,
                              String news_source,
-                             Bitmap news_media_avatar_url,
+                             String news_media_avatar_url,
                              String news_source_url
     ) {
         this.itemType = itemType;
@@ -49,9 +49,9 @@ public class CardItemDataModel {
                              String news_abstract,
                              int news_comments_count,
                              String news_source,
-                             Bitmap news_media_avatar_url,
+                             String news_media_avatar_url,
                              String news_source_url,
-                             Bitmap imageDrawable
+                             String imageDrawable
     ) {
         this.itemType = itemType;
         this.id = id;
@@ -71,9 +71,9 @@ public class CardItemDataModel {
                              String news_abstract,
                              int news_comments_count,
                              String news_source,
-                             Bitmap news_media_avatar_url,
+                             String news_media_avatar_url,
                              String news_source_url,
-                             ArrayList<Bitmap> threeImageDrawable
+                             ArrayList<String> threeImageDrawable
     ) {
         this.itemType = itemType;
         this.id = id;
@@ -90,7 +90,7 @@ public class CardItemDataModel {
         return id;
     }
 
-    public Bitmap getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
@@ -110,11 +110,11 @@ public class CardItemDataModel {
         return itemType;
     }
 
-    public ArrayList<Bitmap> getThreeImageDrawable() {
+    public ArrayList<String> getThreeImageDrawable() {
         return threeImageDrawable;
     }
 
-    public Bitmap getImageDrawable() {
+    public String getImageDrawable() {
         return imageDrawable;
     }
 

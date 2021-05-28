@@ -1,9 +1,4 @@
 package com.example.toutiao.ui.page.news_channel;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -13,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +17,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.toutiao.R;
-import com.example.toutiao.clients.news.NewsRequest;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.card_list.CardAdapter;
 import com.example.toutiao.ui.card.card_list.CardItemDataModel;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,14 +66,9 @@ public class NewsChannelFragment extends Fragment {
     private List<CardItemDataModel> dataModelList = new ArrayList<>();
     private String category;
     private int index;
-    static public ArrayList<Boolean> isRendered;
+//    GetNewsItemTask task;
 
     public NewsChannelFragment() {
-        // Required empty public constructor
-        isRendered = new ArrayList<>(9);
-        for(int i = 0; i < isRendered.size(); ++i) {
-            isRendered.set(i, false);
-        }
     }
 
     /**
@@ -121,22 +116,30 @@ public class NewsChannelFragment extends Fragment {
         mAdapter = new CardAdapter(dataModelList, container.getContext());
         mRecyclerView.setAdapter(mAdapter);
 
-        TextView textView = (TextView)view.findViewById(R.id.section_label);
-        new GetNewsItemTask().execute();
+        TextView textView = (TextView) view.findViewById(R.id.section_label);
+//        task = new GetNewsItemTask();
+//        task.execute();
+        try {
+            getInitNews();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
 
         pageViewModel.getCategory().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
-                new GetNewsItemTask().execute();
+//                new GetNewsItemTask().execute();
             }
         });
         // Inflate the layout for this fragment
         return view;
     }
 
+
     // render the recycler view card list
     public void renderCardList() {
+        System.out.println("render card, news list size: " + newsDataModelList.size());
         for (int i = 0; i < newsDataModelList.size(); ++i) {
             int type = newsDataModelList.get(i).getNews_card_style_type();
             String news_id = newsDataModelList.get(i).getNews_id();
@@ -144,12 +147,12 @@ public class NewsChannelFragment extends Fragment {
             String news_abstract = newsDataModelList.get(i).getNews_abstract();
             int news_comments_count = newsDataModelList.get(i).getNews_comments_count();
             String news_source = newsDataModelList.get(i).getNews_source();
-            Bitmap news_media_avatar_url = newsDataModelList.get(i).getNews_media_avatar_url();
+            String news_media_avatar_url = newsDataModelList.get(i).getNews_media_avatar_url();
             String news_source_url = newsDataModelList.get(i).getNews_source_url();
 
-            if(type == NO_IMAGE_TYPE) {
+            if (type == NO_IMAGE_TYPE) {
                 dataModelList.add(new CardItemDataModel(
-                        ONE_IMAGE_TYPE,
+                        NO_IMAGE_TYPE,
                         news_id,
                         news_title,
                         news_abstract,
@@ -159,7 +162,7 @@ public class NewsChannelFragment extends Fragment {
                         news_source_url
                 ));
             } else if (type == ONE_IMAGE_TYPE) {
-                Bitmap middle_image = newsDataModelList.get(i).getNews_image_url();
+                String middle_image = newsDataModelList.get(i).getNews_image_url();
                 dataModelList.add(new CardItemDataModel(
                         ONE_IMAGE_TYPE,
                         news_id,
@@ -173,9 +176,9 @@ public class NewsChannelFragment extends Fragment {
                 ));
 
             } else if (type == THREE_IMAGE_TYPE) {
-                ArrayList<Bitmap> news_three_image = newsDataModelList.get(i).getNews_three_image();
+                ArrayList<String> news_three_image = newsDataModelList.get(i).getNews_three_image();
                 dataModelList.add(new CardItemDataModel(
-                        ONE_IMAGE_TYPE,
+                        THREE_IMAGE_TYPE,
                         news_id,
                         news_title,
                         news_abstract,
@@ -187,68 +190,138 @@ public class NewsChannelFragment extends Fragment {
                 ));
             }
         }
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter and pass in our data model list
+        mAdapter = new CardAdapter(dataModelList, getContext());
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     final String base_url = "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
     int max_behot_time = 0;
-    public JSONObject result;
+    public JsonObject result;
+    public JsonArray news_data;
     ArrayList<NewsDataModel> newsDataModelList = new ArrayList<>();
-    private static final String[] category_attr = new String[] {
-      "__all__",
-      "news_tech",
-      "news_hot",
-      "news_image",
-      "news_entertainment",
-      "news_game",
-      "news_sports",
-      "news_finance",
-      "digital"
+    private static final String[] category_attr = new String[]{
+            "__all__",
+            "news_tech",
+            "news_hot",
+            "news_image",
+            "news_entertainment",
+            "news_game",
+            "news_sports",
+            "news_finance",
+            "digital"
     };
 
-    public void getInitNews() throws IOException {
+    public void getInitNews() throws IOException, JSONException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .get()
                 .url(String.format(Locale.ENGLISH, base_url, max_behot_time, category_attr[index]))
                 .build();
         Call call = client.newCall(request);
-        Response response;
+//        Response response;
+//
+//        response = call.execute();
+//        if (response.isSuccessful()) {
+//            System.out.println("response body");
+//            String jsonData = response.body().string();
+//            System.out.println("string to JsonObject");
+//            this.result = JsonParser.parseString(jsonData).getAsJsonObject();
+//            System.out.println("result, before max_behot_time " + this.max_behot_time);
+//            System.out.println(this.result.getAsJsonObject("next").has("max_behot_time"));
+//            this.max_behot_time = this.result.getAsJsonObject("next").get("max_behot_time").getAsInt();
+//            System.out.println("After max_behot_time : " + this.max_behot_time + " get news object");
+//            news_data = this.result.getAsJsonArray("data");
+//            for (int i = 0; i < news_data.size(); i++) {
+//                System.out.println("newsObjects " + i);
+//                dealWithNewsObject(news_data.get(i).getAsJsonObject());
+//            }
+//            renderCardList();
+//        }
 
-        try {
-            response = call.execute();
-            if (response.isSuccessful()) {
-                System.out.println("response body");
-                System.out.println(response.body().string());
-                String jsonData = response.body().string();
-                result = new JSONObject(jsonData);
-                System.out.println("result");
-                System.out.println(result.toString(2));
-                max_behot_time = result.getInt("max_behot_time");
-                JSONArray newsObjects = result.getJSONArray("data");
-                for (int i = 0; i < newsObjects.length(); ++i) {
-                    dealWithNewsObject(newsObjects.getJSONObject(i));
-                }
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
+//                System.out.println("response body");
+                String jsonData = response.body().string();
+                responseBody(jsonData);
+            }
+        });
     }
 
-    public void dealWithNewsObject(JSONObject object) throws JSONException {
+    public void responseBody(String jsonData) {
+        System.out.println("string to JsonObject");
+        result = JsonParser.parseString(jsonData).getAsJsonObject();
+        System.out.println("result, before max_behot_time " + max_behot_time);
+        System.out.println(result.getAsJsonObject("next").has("max_behot_time"));
+        max_behot_time = result.getAsJsonObject("next").get("max_behot_time").getAsInt();
+        System.out.println("After max_behot_time : " + max_behot_time + " get news object");
+        news_data = result.getAsJsonArray("data");
+        for (int i = 0; i < news_data.size(); i++) {
+            System.out.println("newsObjects " + i);
+            try {
+                dealWithNewsObject(news_data.get(i).getAsJsonObject());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        runThread();
+    }
+
+    private void runThread() {
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        new Thread() {
+            public void run() {
+                handler.post(() -> renderCardList());
+            }
+        }.start();
+    }
+
+
+    public void dealWithNewsObject(JsonObject object) throws JSONException {
         NewsDataModel temp;
+        System.out.println("news_id " + object.get("group_id").getAsString());
+        String news_id = object.get("group_id").getAsString();
+        System.out.println("news_title " + object.get("title").getAsString());
+        String news_title = object.get("title").getAsString();
+        String news_abstract = news_title;
+        System.out.println("news_abstract " + object.has("abstract"));
+        if (object.has("abstract")) {
+            news_abstract = object.get("abstract").getAsString();
+        }
+        System.out.println("news_comments_count " + object.has("comments_count"));
+        int news_comments_count = 0;
+        if (object.has("comments_count")) {
+            news_comments_count = object.get("comments_count").getAsInt();
+        }
+        System.out.println("news_source " + object.get("source").getAsString());
+        String news_source = object.get("source").getAsString();
+        String news_media_avatar_url = "https://img.88icon.com/download/jpg/20200901/84083236c883964781afea41f1ea4e9c_512_511.jpg!88bg";
+        if (object.has("media_avatar_url")) {
+            news_media_avatar_url = "https:" + object.get("media_avatar_url").getAsString();
+        }
+        System.out.println("news_source_url " + object.get("source_url").getAsString());
+        String news_source_url = object.get("source_url").getAsString();
 
-        String news_id = object.getString("group_id");
-        String news_title = object.getString("title");
-        String news_abstract = object.getString("abstract");
-        int news_comments_count = object.getInt("comments_count");
-        String news_source = object.getString("source");
-        Bitmap news_media_avatar_url = null;
-        String news_source_url = object.getString("source_url");
-
+        System.out.println("have image_list " + object.has("image_list"));
+        System.out.println("single_mode " + object.get("single_mode").getAsBoolean());
         // three image style
         if (object.has("image_list")) {
-            JSONArray image_list = object.getJSONArray("image_list");
-            ArrayList<Bitmap> news_three_image = new ArrayList<>();
+            JsonArray image_list = object.get("image_list").getAsJsonArray();
+            ArrayList<String> news_three_image = new ArrayList<>();
+            for (int i = 0; i < image_list.size(); i++) {
+                news_three_image.add("https:" + image_list.get(i).getAsJsonObject().get("url").getAsString());
+            }
             temp = new NewsDataModel(
                     NewsDataModel.THREE_IMAGE_TYPE,
                     news_id,
@@ -262,8 +335,8 @@ public class NewsChannelFragment extends Fragment {
             );
         }
         // one image style
-        else if (object.getBoolean("single_mode")) {
-            Bitmap middle_image = null;
+        else if (object.get("single_mode").getAsBoolean()) {
+            String middle_image = "https:" + object.get("image_url").getAsString();
 
             temp = new NewsDataModel(
                     NewsDataModel.ONE_IMAGE_TYPE,
@@ -293,88 +366,136 @@ public class NewsChannelFragment extends Fragment {
         newsDataModelList.add(temp);
     }
 
-    public void cacheImage(String image_url, int index, int type) throws IOException {
-        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-        File cacheDirectory = new File(getContext().getCacheDir(), "http");
-        Cache cache = new Cache(cacheDirectory, cacheSize);
-        OkHttpClient client = new OkHttpClient.Builder().cache(cache).build();
-        Bitmap bitmap = null;
+//    public void dealWithImages() throws IOException {
+//        String image_url;
+//        System.out.println("news data size: " + news_data.size());
+//        int max = news_data.size();
+//        for (int i = 0; i < max; i++) {
+//            System.out.println("------------\ndeal with news object " + i);
+//            JsonObject object = news_data.get(i).getAsJsonObject();
+//            System.out.println("has() avatar url : " + object.has("media_avatar_url"));
+//            image_url = "https:" + object.get("media_avatar_url").getAsString();
+//
+//            cacheImage(image_url, i, 0);
+//
+//            // deal with card style
+//            if (object.has("image_list")) {
+//                JsonArray image_list = object.get("image_list").getAsJsonArray();
+//                int image_list_max = image_list.size();
+//                System.out.println("is image list , size: " + image_list_max);
+//                threeImageFor(image_list, i, image_list_max);
+//            }
+//            // one image style
+//            else if (object.get("single_mode").getAsBoolean()) {
+//                System.out.println("is one image, has() : " + object.has("image_url"));
+//                image_url = "https:" + object.get("image_url").getAsString();
+////                        System.out.println("image url : " + image_url);
+//                cacheImage(image_url, i, 1);
+//            } else {
+//                System.out.println("no image");
+//            }
+//        }
+//    }
 
-        Request request = new Request.Builder()
-                .get()
-                .url(String.format(Locale.ENGLISH, "http://%s", image_url))
-                .build();
-        Call call = client.newCall(request);
-        Response response;
-        response = call.execute();
-        ResponseBody body = response.body();
-        if (response.isSuccessful() && body != null) {
-            InputStream is = body.byteStream();
-            bitmap = BitmapFactory.decodeStream(is);
-            switch(type) {
-                case 0:
-                    newsDataModelList.get(index).setNews_media_avatar_url(bitmap);
-                    break;
-                case 1:
-                    newsDataModelList.get(index).setNews_image_url(bitmap);
-                    break;
-                case 2:
-                    newsDataModelList.get(index).setNews_three_image(bitmap);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+//    public void threeImageFor(JsonArray image_list, final int index, final int size) throws IOException {
+//        String image_url;
+//        // System.out.println(image_list.toString());
+//        for (int j = 0; j < size; j++) {
+//            System.out.println("three image list " + j);
+//            System.out.println("has() : " + image_list.get(j).getAsJsonObject().has("url"));
+//            JsonObject image = image_list.get(j).getAsJsonObject();
+//            image_url = "https:" + image.get("url").getAsString();
+////                            System.out.println("image list "+ i +" url : " + image_url);
+//            cacheImage(image_url, index, 2);
+//            System.out.println("finish image list " + j);
+//        }
+//    }
 
-    public class GetNewsItemTask extends AsyncTask<Void, Void, Void> {
+//    public void cacheImage(final String image_url, final int index, final int type) throws IOException {
+//        System.out.println("image_url : " + image_url + ", index: " + index + ", type: " + type);
+//        int cacheSize = 10 * 1024 * 1024; // 10 MiB
+//        File cacheDirectory = new File(getContext().getCacheDir(), "cache");
+//        Cache cache = new Cache(cacheDirectory, cacheSize);
+//        OkHttpClient client = new OkHttpClient.Builder().cache(cache).build();
+//        Bitmap bitmap = null;
+//
+//        Request request = new Request.Builder()
+//                .get()
+//                .url(image_url)
+//                .build();
+//        Call call = client.newCall(request);
+//        Response response;
+//        response = call.execute();
+//        if (response.isSuccessful()) {
+//            System.out.println("get inputStream from response body byteStream");
+//            InputStream is = response.body().byteStream();
+//            bitmap = BitmapFactory.decodeStream(is);
+//            switch (type) {
+//                case 0:
+//                    System.out.println("save avatar");
+//                    newsDataModelList.get(index).setNews_media_avatar_url(bitmap);
+//                    break;
+//                case 1:
+//                    System.out.println("save image");
+//                    newsDataModelList.get(index).setNews_image_url(bitmap);
+//                    break;
+//                case 2:
+//                    System.out.println("save image list");
+//                    //System.out.println("before size: " + newsDataModelList.get(index).getNews_three_image().size());
+//                    //newsDataModelList.get(index).setNews_three_image(bitmap);
+//                    //System.out.println("after size: " + newsDataModelList.get(index).getNews_three_image().size());
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//    }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                getInitNews();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
+//    public class GetNewsItemTask extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            try {
+//                getInitNews();
+//            } catch (IOException | JSONException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void unused) {
+//            System.out.println("finish Task 1");
+////            new getImagesTask().execute();
+////            renderCardList();
+//        }
+//
+//
+//    }
 
-        @Override
-        protected void onPostExecute(Void unused) {
-            new getImagesTask().execute();
-        }
-    }
-
-    public class getImagesTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                JSONArray newsObjects = result.getJSONArray("data");
-                for (int i = 0; i < newsObjects.length(); ++i) {
-                    JSONObject object = newsObjects.getJSONObject(i);
-                    cacheImage("http:" + object.getString("media_avatar_url"), i, 0);
-                    if (object.has("image_list")) {
-                        JSONArray image_list = object.getJSONArray("image_list");
-                        for(int j = 0; j < image_list.length(); ++j) {
-                            cacheImage("http:" + image_list.getJSONObject(i).getString("url"), i, 2);
-                        }
-                    }
-                    // one image style
-                    else if (object.getBoolean("single_mode")) {
-                        cacheImage("http:" + object.getString("media_avatar_url"), i, 1);
-                    }
-                }
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            renderCardList();
-        }
-    }
+//    public class getImagesTask extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            System.out.println("execute Task 2");
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            try {
+//                dealWithImages();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void unused) {
+//            System.out.println("Finish Task2, start render Card List");
+//            renderCardList();
+//        }
+//    }
 
 }

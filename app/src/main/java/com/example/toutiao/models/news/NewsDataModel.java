@@ -15,11 +15,11 @@ public class NewsDataModel {
     private String news_abstract; // news abstract
     private int news_comments_count; // comments count
     private String news_source; // author name
-    private Bitmap news_media_avatar_url; // author avatar
+    private String news_media_avatar_url; // author avatar
     private String news_source_url; // detail page url
     // different
-    private Bitmap news_image_url; // one image card style
-    private ArrayList<Bitmap> news_three_image; // three image card style
+    private String news_image_url; // one image card style
+    private ArrayList<String> news_three_image; // three image card style
 
     // no image style constructor
     public NewsDataModel(
@@ -29,7 +29,7 @@ public class NewsDataModel {
             String news_abstract,
             int news_comments_count,
             String news_source,
-            Bitmap news_media_avatar_url,
+            String news_media_avatar_url,
             String news_source_url
     ) {
         this.news_card_style_type = news_card_style_type;
@@ -49,9 +49,9 @@ public class NewsDataModel {
             String news_abstract,
             int news_comments_count,
             String news_source,
-            Bitmap news_media_avatar_url,
+            String news_media_avatar_url,
             String news_source_url,
-            Bitmap news_image_url
+            String news_image_url
     ) {
         this.news_card_style_type = news_card_style_type;
         this.news_id = news_id;
@@ -71,9 +71,9 @@ public class NewsDataModel {
             String news_abstract,
             int news_comments_count,
             String news_source,
-            Bitmap news_media_avatar_url,
+            String news_media_avatar_url,
             String news_source_url,
-            ArrayList<Bitmap> news_three_image
+            ArrayList<String> news_three_image
     ) {
         this.news_card_style_type = news_card_style_type;
         this.news_id = news_id;
@@ -110,7 +110,7 @@ public class NewsDataModel {
         return news_source;
     }
 
-    public Bitmap getNews_media_avatar_url() {
+    public String getNews_media_avatar_url() {
         return news_media_avatar_url;
     }
 
@@ -118,23 +118,23 @@ public class NewsDataModel {
         return news_source_url;
     }
 
-    public Bitmap getNews_image_url() {
+    public String getNews_image_url() {
         return news_image_url;
     }
 
-    public ArrayList<Bitmap> getNews_three_image() {
+    public ArrayList<String> getNews_three_image() {
         return news_three_image;
     }
 
-    public void setNews_media_avatar_url(Bitmap news_media_avatar_url) {
+    public void setNews_media_avatar_url(String news_media_avatar_url) {
         this.news_media_avatar_url = news_media_avatar_url;
     }
 
-    public void setNews_image_url(Bitmap news_image_url) {
+    public void setNews_image_url(String news_image_url) {
         this.news_image_url = news_image_url;
     }
 
-    public void setNews_three_image(Bitmap news_image_url) {
+    public void setNews_three_image(String news_image_url) {
         this.news_three_image.add(news_image_url);
     }
 }

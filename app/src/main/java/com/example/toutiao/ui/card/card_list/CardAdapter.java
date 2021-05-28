@@ -13,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.toutiao.R;
+import com.example.toutiao.activity.MainActivity;
 import com.example.toutiao.activity.NewsDetailActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            avatarView.setImageBitmap(dataModel.getAvatar());
+            Picasso.get().load(dataModel.getAvatar()).into(avatarView);
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
@@ -70,8 +72,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            avatarView.setImageBitmap(dataModel.getAvatar());
-            cardImageView.setImageBitmap(dataModel.getImageDrawable());
+            Picasso.get().load(dataModel.getAvatar()).into(avatarView);
+            Picasso.get().load(dataModel.getImageDrawable()).into(cardImageView);
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
@@ -104,11 +106,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            avatarView.setImageBitmap(dataModel.getAvatar());
-            ArrayList<Bitmap> images = dataModel.getThreeImageDrawable();
-            cardImageView1.setImageBitmap(images.get(0));
-            cardImageView2.setImageBitmap(images.get(1));
-            cardImageView3.setImageBitmap(images.get(2));
+            Picasso.get().load(dataModel.getAvatar()).into(avatarView);
+            ArrayList<String> images = dataModel.getThreeImageDrawable();
+            Picasso.get().load(images.get(0)).into(cardImageView1);
+            Picasso.get().load(images.get(1)).into(cardImageView2);
+            Picasso.get().load(images.get(2)).into(cardImageView3);
             titleTextView.setText(dataModel.getTitle());
             subTitleTextView.setText(dataModel.getSubTitle());
             bottomTextView.setText(dataModel.getBottomText());
