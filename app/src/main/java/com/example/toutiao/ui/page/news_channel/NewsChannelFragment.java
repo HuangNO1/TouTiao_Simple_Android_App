@@ -1,12 +1,14 @@
 package com.example.toutiao.ui.page.news_channel;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
@@ -64,6 +67,7 @@ public class NewsChannelFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     LottieAnimationView animationView;
+    private SwipeRefreshLayout swipeContainer;
 
     private List<CardItemDataModel> dataModelList = new ArrayList<>();
     private String category;
@@ -122,9 +126,33 @@ public class NewsChannelFragment extends Fragment {
         mAdapter = new CardAdapter(dataModelList, container.getContext());
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private boolean loading = false;
+
+//            @Override
+//            public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if(!loading && !recyclerView.canScrollVertically(1)){
+//                    loading = true;
+//
+//                }
+//            }
+            @Override
+            public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (!recyclerView.canScrollVertically(1)){ //1 for down
+                    try {
+                        mRecyclerView.setNestedScrollingEnabled(false);
+                        loadMoreNews();
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         TextView textView = (TextView) view.findViewById(R.id.section_label);
-//        task = new GetNewsItemTask();
-//        task.execute();
         try {
             getInitNews();
         } catch (IOException | JSONException e) {
@@ -135,9 +163,34 @@ public class NewsChannelFragment extends Fragment {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
-//                new GetNewsItemTask().execute();
             }
         });
+
+        // Getting SwipeContainerLayout
+        swipeContainer = view.findViewById(R.id.swipeContainer);
+        // Adding Listener
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                try {
+                    getInitNews();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+//        swipeContainer.set
+        // Configure the refreshing colors
+
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         // Inflate the layout for this fragment
         return view;
     }
@@ -197,6 +250,8 @@ public class NewsChannelFragment extends Fragment {
             }
         }
         animationView.setVisibility(View.GONE);
+        swipeContainer.setRefreshing(false);
+        mRecyclerView.setNestedScrollingEnabled(false);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -224,7 +279,37 @@ public class NewsChannelFragment extends Fragment {
     };
 
     public void getInitNews() throws IOException, JSONException {
+        newsDataModelList.clear();
+        dataModelList.clear();
+        animationView.setVisibility(View.VISIBLE);
+        max_behot_time = 0;
         OkHttpClient client = new OkHttpClient();
+        System.out.println(String.format(Locale.ENGLISH, base_url, max_behot_time, category_attr[index]));
+        Request request = new Request.Builder()
+                .get()
+                .url(String.format(Locale.ENGLISH, base_url, max_behot_time, category_attr[index]))
+                .build();
+        Call call = client.newCall(request);
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
+//                System.out.println("response body");
+                String jsonData = response.body().string();
+                responseBody(jsonData);
+            }
+        });
+    }
+
+    public void loadMoreNews() throws IOException, JSONException {
+        newsDataModelList.clear();
+        OkHttpClient client = new OkHttpClient();
+        System.out.println(String.format(Locale.ENGLISH, base_url, max_behot_time, category_attr[index]));
         Request request = new Request.Builder()
                 .get()
                 .url(String.format(Locale.ENGLISH, base_url, max_behot_time, category_attr[index]))
