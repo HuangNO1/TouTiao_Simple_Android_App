@@ -51,7 +51,14 @@ public class NewsDetailActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setMax(100);
         progressBar.setProgress(1);
-        setNewsDetailWebView("https://m.toutiao.com" + url);
+        if(url.substring(0, 3) == "http")
+        {
+            setNewsDetailWebView(url);
+        }
+        else {
+            setNewsDetailWebView("https://m.toutiao.com" + url);
+        }
+
 
         backButton = findViewById(R.id.backButton);
         backButtonOnClick();
