@@ -24,6 +24,7 @@ import com.example.toutiao.R;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.card_list.CardAdapter;
 import com.example.toutiao.ui.card.card_list.CardItemDataModel;
+import com.example.toutiao.ui.customViewPager.CustomViewPager;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -71,9 +72,10 @@ public class NewsChannelFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    LottieAnimationView animationView;
+    private LottieAnimationView animationView;
 //    private SwipeRefreshLayout swipeContainer;
-    RefreshLayout refreshLayout;
+    private RefreshLayout refreshLayout;
+    private CustomViewPager customViewPager;
 
     private List<CardItemDataModel> dataModelList = new ArrayList<>();
     private String category;
@@ -114,6 +116,9 @@ public class NewsChannelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
+
+        customViewPager = view.findViewById(R.id.custom_viewPager);
+
         animationView = view.findViewById(R.id.animation_view);
         animationView.setAnimation("load-animation.json");
         animationView.setSpeed(1);
@@ -143,6 +148,7 @@ public class NewsChannelFragment extends Fragment {
             public void onRefresh(RefreshLayout refreshlayout) {
                 try {
                     refreshNews();
+                    customViewPager.setPagingEnabled(false);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
@@ -154,6 +160,7 @@ public class NewsChannelFragment extends Fragment {
             public void onLoadMore(RefreshLayout refreshlayout) {
                 try {
                     loadMoreNews();
+                    customViewPager.setPagingEnabled(false);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
@@ -248,6 +255,7 @@ public class NewsChannelFragment extends Fragment {
             mLayoutManager.smoothScrollToPosition(mRecyclerView, new RecyclerView.State(), item - 1);
             isLoadMore = false;
         }
+        customViewPager.setPagingEnabled(true);
     }
 
     final String base_url = "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
