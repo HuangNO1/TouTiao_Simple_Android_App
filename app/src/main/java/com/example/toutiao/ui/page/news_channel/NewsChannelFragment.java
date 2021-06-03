@@ -1,35 +1,26 @@
 package com.example.toutiao.ui.page.news_channel;
+
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.PagerAdapter;
-
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.card_list.CardAdapter;
 import com.example.toutiao.ui.card.card_list.CardItemDataModel;
-import com.example.toutiao.ui.customViewPager.CustomViewPager;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -40,26 +31,18 @@ import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
-import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import static com.example.toutiao.ui.card.card_list.CardItemDataModel.NO_IMAGE_TYPE;
 import static com.example.toutiao.ui.card.card_list.CardItemDataModel.ONE_IMAGE_TYPE;
@@ -77,9 +60,9 @@ public class NewsChannelFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private LottieAnimationView animationView;
-//    private SwipeRefreshLayout swipeContainer;
+    //    private SwipeRefreshLayout swipeContainer;
     private RefreshLayout refreshLayout;
-//    private CustomViewPager customViewPager;
+    //    private CustomViewPager customViewPager;
     private ImageView mScreenMask;
 
     private List<CardItemDataModel> dataModelList = new ArrayList<>();
@@ -268,7 +251,7 @@ public class NewsChannelFragment extends Fragment {
         mAdapter = new CardAdapter(dataModelList, getContext());
         mRecyclerView.setAdapter(mAdapter);
 //        mRecyclerView.smoothScrollToPosition(item);
-        if(isLoadMore) {
+        if (isLoadMore) {
             mLayoutManager.smoothScrollToPosition(mRecyclerView, new RecyclerView.State(), item - 1);
             isLoadMore = false;
         }
