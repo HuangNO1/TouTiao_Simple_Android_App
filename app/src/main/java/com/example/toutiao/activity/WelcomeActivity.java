@@ -13,6 +13,10 @@ import android.view.Window;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
 
+/**
+ * WelcomeActivity is a activity showing welcome message, and then jump to MainActivity.
+ */
+
 public class WelcomeActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -20,31 +24,30 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        Window window = this.getWindow();
-        window.getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        Window mWindow = this.getWindow();
+        mWindow.getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN| View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
-        LottieAnimationView animationView = findViewById(R.id.animation_view);
-        animationView.setAnimation("news-icon-animation.json");
-        animationView.setSpeed(2);
-        animationView.playAnimation();
+        LottieAnimationView mLoadingAnimationView = findViewById(R.id.animation_view_loading);
+        mLoadingAnimationView.setAnimation("news-icon-animation.json");
+        mLoadingAnimationView.setSpeed(2);
+        mLoadingAnimationView.playAnimation();
         mHandler.sendEmptyMessageDelayed(GOTO_MAIN_ACTIVITY, 1450); // 1.45 秒跳轉
     }
 
     private static final int GOTO_MAIN_ACTIVITY = 0;
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        public boolean handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case GOTO_MAIN_ACTIVITY:
-                    Intent intent = new Intent();
-                    //將原本 Activity 的換成 MainActivity
-                    intent.setClass(WelcomeActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    break;
 
-                default:
-                    break;
+    /**
+     * A Handler to refresh UI (Jump to MainActivity)
+     */
+    private final Handler mHandler = new Handler(new Handler.Callback() {
+        public boolean handleMessage(android.os.Message msg) {
+            if (msg.what == GOTO_MAIN_ACTIVITY) {
+                Intent intent = new Intent();
+                // 將原本 Activity 的換成 MainActivity
+                intent.setClass(WelcomeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             return true;
         }

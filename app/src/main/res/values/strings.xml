@@ -23,4 +23,9 @@
     <string name="search_hint">输入内容进行搜索</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="subtitle_goes_here">Subtitle goes here</string>
+    <string name="title_goes_here">Title goes here</string>
+    <string name="comment">comment</string>
+    <string name="avatar">Avatar</string>
+    <string name="image_url">imageUrl</string>
 </resources>

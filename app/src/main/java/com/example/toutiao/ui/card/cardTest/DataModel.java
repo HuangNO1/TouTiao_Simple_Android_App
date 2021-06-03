@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.card.card_test;
+package com.example.toutiao.ui.card.cardTest;
 
 import com.example.toutiao.R;
 

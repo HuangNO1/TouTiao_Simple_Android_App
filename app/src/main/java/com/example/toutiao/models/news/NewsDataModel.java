@@ -1,140 +1,175 @@
 package com.example.toutiao.models.news;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
+
+/**
+ * Data Model Class for news After requesting
+ */
 
 public class NewsDataModel {
     public static final int NO_IMAGE_TYPE = 0;
     public static final int ONE_IMAGE_TYPE = 1;
     public static final int THREE_IMAGE_TYPE = 2;
     // same
-    private int news_card_style_type; // three different card style
-    private String news_id; // id
-    private String news_title; // news title
-    private String news_abstract; // news abstract
-    private int news_comments_count; // comments count
-    private String news_source; // author name
-    private String news_media_avatar_url; // author avatar
-    private String news_source_url; // detail page url
+    private int mNewsCardStyleType; // three different card style
+    private String mNewsId; // id
+    private String mNewsTitle; // news title
+    private String mNewsAbstract; // news abstract
+    private int mNewsCommentsCount; // comments count
+    private String mNewsSource; // author name
+    private String mNewsMediaAvatarUrl; // author avatar
+    private String mNewsSourceUrl; // detail page url
     // different
-    private String news_image_url; // one image card style
-    private ArrayList<String> news_three_image; // three image card style
+    private String mNewsImageUrl; // one image card style
+    private ArrayList<String> mNewsThreeImage; // three image card style
 
     // no image style constructor
     public NewsDataModel(
-            int news_card_style_type,
-            String news_id,
-            String news_title,
-            String news_abstract,
-            int news_comments_count,
-            String news_source,
-            String news_media_avatar_url,
-            String news_source_url
+            int newsCardStyleType,
+            String newsId,
+            String newsTitle,
+            String newsAbstract,
+            int newsCommentsCount,
+            String newsSource,
+            String newsMediaAvatarUrl,
+            String newsSourceUrl
     ) {
-        this.news_card_style_type = news_card_style_type;
-        this.news_id = news_id;
-        this.news_title = news_title;
-        this.news_abstract = news_abstract;
-        this.news_comments_count = news_comments_count;
-        this.news_source = news_source;
-        this.news_media_avatar_url = news_media_avatar_url;
-        this.news_source_url = news_source_url;
+        mNewsCardStyleType = newsCardStyleType;
+        mNewsId = newsId;
+        mNewsTitle = newsTitle;
+        mNewsAbstract = newsAbstract;
+        mNewsCommentsCount = newsCommentsCount;
+        mNewsSource = newsSource;
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+        mNewsSourceUrl = newsSourceUrl;
     }
 
+    // one image style constructor
     public NewsDataModel(
-            int news_card_style_type,
-            String news_id,
-            String news_title,
-            String news_abstract,
-            int news_comments_count,
-            String news_source,
-            String news_media_avatar_url,
-            String news_source_url,
-            String news_image_url
+            int newsCardStyleType,
+            String newsId,
+            String newsTitle,
+            String newsAbstract,
+            int newsCommentsCount,
+            String newsSource,
+            String newsMediaAvatarUrl,
+            String newsSourceUrl,
+            String newsImageUrl
     ) {
-        this.news_card_style_type = news_card_style_type;
-        this.news_id = news_id;
-        this.news_title = news_title;
-        this.news_abstract = news_abstract;
-        this.news_comments_count = news_comments_count;
-        this.news_source = news_source;
-        this.news_media_avatar_url = news_media_avatar_url;
-        this.news_source_url = news_source_url;
-        this.news_image_url = news_image_url;
+        mNewsCardStyleType = newsCardStyleType;
+        mNewsId = newsId;
+        mNewsTitle = newsTitle;
+        mNewsAbstract = newsAbstract;
+        mNewsCommentsCount = newsCommentsCount;
+        mNewsSource = newsSource;
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+        mNewsSourceUrl = newsSourceUrl;
+        mNewsImageUrl = newsImageUrl;
     }
 
+    // three image style constructor
     public NewsDataModel(
-            int news_card_style_type,
-            String news_id,
-            String news_title,
-            String news_abstract,
-            int news_comments_count,
-            String news_source,
-            String news_media_avatar_url,
-            String news_source_url,
-            ArrayList<String> news_three_image
+            int newsCardStyleType,
+            String newsId,
+            String newsTitle,
+            String newsAbstract,
+            int newsCommentsCount,
+            String newsSource,
+            String newsMediaAvatarUrl,
+            String newsSourceUrl,
+            ArrayList<String> newsThreeImage
     ) {
-        this.news_card_style_type = news_card_style_type;
-        this.news_id = news_id;
-        this.news_title = news_title;
-        this.news_abstract = news_abstract;
-        this.news_comments_count = news_comments_count;
-        this.news_source = news_source;
-        this.news_media_avatar_url = news_media_avatar_url;
-        this.news_source_url = news_source_url;
-        this.news_three_image = news_three_image;
+        mNewsCardStyleType = newsCardStyleType;
+        mNewsId = newsId;
+        mNewsTitle = newsTitle;
+        mNewsAbstract = newsAbstract;
+        mNewsCommentsCount = newsCommentsCount;
+        mNewsSource = newsSource;
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+        mNewsSourceUrl = newsSourceUrl;
+        mNewsThreeImage = newsThreeImage;
     }
 
-    public int getNews_card_style_type() {
-        return news_card_style_type;
+    public int getNewsCardStyleType() {
+        return mNewsCardStyleType;
     }
 
-    public String getNews_id() {
-        return news_id;
+    public void setNewsCardStyleType(int newsCardStyleType) {
+        mNewsCardStyleType = newsCardStyleType;
     }
 
-    public String getNews_title() {
-        return news_title;
+    public String getNewsId() {
+        return mNewsId;
     }
 
-    public String getNews_abstract() {
-        return news_abstract;
+    public void setNewsId(String newsId) {
+        mNewsId = newsId;
     }
 
-    public int getNews_comments_count() {
-        return news_comments_count;
+    public String getNewsTitle() {
+        return mNewsTitle;
     }
 
-    public String getNews_source() {
-        return news_source;
+    public void setNewsTitle(String newsTitle) {
+        mNewsTitle = newsTitle;
     }
 
-    public String getNews_media_avatar_url() {
-        return news_media_avatar_url;
+    public String getNewsAbstract() {
+        return mNewsAbstract;
     }
 
-    public String getNews_source_url() {
-        return news_source_url;
+    public void setNewsAbstract(String newsAbstract) {
+        mNewsAbstract = newsAbstract;
     }
 
-    public String getNews_image_url() {
-        return news_image_url;
+    public int getNewsCommentsCount() {
+        return mNewsCommentsCount;
     }
 
-    public ArrayList<String> getNews_three_image() {
-        return news_three_image;
+    public void setNewsCommentsCount(int newsCommentsCount) {
+        mNewsCommentsCount = newsCommentsCount;
     }
 
-    public void setNews_media_avatar_url(String news_media_avatar_url) {
-        this.news_media_avatar_url = news_media_avatar_url;
+    public String getNewsSource() {
+        return mNewsSource;
     }
 
-    public void setNews_image_url(String news_image_url) {
-        this.news_image_url = news_image_url;
+    public void setNewsSource(String newsSource) {
+        mNewsSource = newsSource;
     }
 
-    public void setNews_three_image(String news_image_url) {
-        this.news_three_image.add(news_image_url);
+    public String getNewsMediaAvatarUrl() {
+        return mNewsMediaAvatarUrl;
+    }
+
+    public void setNewsMediaAvatarUrl(String newsMediaAvatarUrl) {
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+    }
+
+    public String getNewsSourceUrl() {
+        return mNewsSourceUrl;
+    }
+
+    public void setNewsSourceUrl(String newsSourceUrl) {
+        mNewsSourceUrl = newsSourceUrl;
+    }
+
+    public String getNewsImageUrl() {
+        return mNewsImageUrl;
+    }
+
+    public void setNewsImageUrl(String newsImageUrl) {
+        mNewsImageUrl = newsImageUrl;
+    }
+
+    public ArrayList<String> getNewsThreeImage() {
+        return mNewsThreeImage;
+    }
+
+    /*
+     * add a image to mNewsThreeImage array list
+     */
+    public void setNewsThreeImage(String newsImageUrl) {
+        this.mNewsThreeImage.add(newsImageUrl);
     }
 }

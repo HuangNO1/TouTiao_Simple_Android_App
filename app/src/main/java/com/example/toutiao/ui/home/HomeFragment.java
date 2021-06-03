@@ -1,11 +1,8 @@
 package com.example.toutiao.ui.home;
 
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.view.LayoutInflater;
@@ -13,10 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
 
 import com.example.toutiao.R;
-import com.example.toutiao.ui.page.news_channel.SectionsPagerAdapter;
+import com.example.toutiao.ui.page.newsChannel.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 /**
@@ -69,16 +65,17 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Window window = getActivity().getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
+        // setting status bar's color
+        Window mWindow = getActivity().getWindow();
+        mWindow.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        mWindow.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(container.getContext(), getChildFragmentManager());
-        ViewPager viewPager = view.findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = view.findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        ViewPager mViewPagerChannel = view.findViewById(R.id.view_pager_channel);
+        mViewPagerChannel.setAdapter(sectionsPagerAdapter);
+        TabLayout tabsChannel = view.findViewById(R.id.tabs_channel);
+        tabsChannel.setupWithViewPager(mViewPagerChannel);
         return view;
     }
 

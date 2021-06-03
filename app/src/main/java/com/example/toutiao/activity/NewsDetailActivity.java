@@ -1,30 +1,31 @@
 package com.example.toutiao.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
 
+/**
+ * A Activity to be showed news detail.
+ */
+
 public class NewsDetailActivity extends AppCompatActivity {
 
-    WebView NewsDetailWebView;
-    ProgressBar progressBar;
-    Button backButton;
-    LottieAnimationView animationView;
+    private WebView mNewsDetailWebView;
+    private ProgressBar mProgressBar;
+    private Button mBackButton;
+    private LottieAnimationView mLoadingAnimationView;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -32,35 +33,33 @@ public class NewsDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
 
-        Bundle b = getIntent().getExtras();
+        Bundle args = getIntent().getExtras();
         String url = "";
-        if(b != null) {
-            url = b.getString("source_url");
+        if (args != null) {
+            url = args.getString("source_url");
         }
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
 
-        animationView = findViewById(R.id.animation_view);
-        animationView.setAnimation("load-animation.json");
-        animationView.setSpeed(1);
-        animationView.playAnimation();
+        mLoadingAnimationView = findViewById(R.id.animation_view_loading);
+        mLoadingAnimationView.setAnimation("load-animation.json");
+        mLoadingAnimationView.setSpeed(1);
+        mLoadingAnimationView.playAnimation();
 
-        NewsDetailWebView = findViewById(R.id.webView);
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setMax(100);
-        progressBar.setProgress(1);
-        if(url.substring(0, 3) == "http")
-        {
+        mNewsDetailWebView = findViewById(R.id.web_view);
+        mProgressBar = findViewById(R.id.progress_bar_loading);
+        mProgressBar.setMax(100);
+        mProgressBar.setProgress(1);
+        if (url.substring(0, 3) == "http") {
             setNewsDetailWebView(url);
-        }
-        else {
+        } else {
             setNewsDetailWebView("https://m.toutiao.com" + url);
         }
 
 
-        backButton = findViewById(R.id.backButton);
+        mBackButton = findViewById(R.id.button_back);
         backButtonOnClick();
 
     }
@@ -68,41 +67,41 @@ public class NewsDetailActivity extends AppCompatActivity {
     @SuppressLint("SetJavaScriptEnabled")
     private void setNewsDetailWebView(String url) {
 
-        NewsDetailWebView.setWebChromeClient(new WebChromeClient() {
+        mNewsDetailWebView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
-                progressBar.setProgress(progress);
+                mProgressBar.setProgress(progress);
             }
         });
 
-        NewsDetailWebView.setWebViewClient(new WebViewClient() {
+        mNewsDetailWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                progressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.VISIBLE);
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                animationView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                mLoadingAnimationView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
             }
         });
 
         // make rendering be faster
         // no cache
-        NewsDetailWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        //mNewsDetailWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         // hardware acceleration
-        NewsDetailWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        mNewsDetailWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         // enabling javascript
-        NewsDetailWebView.getSettings().setJavaScriptEnabled(true);
+        mNewsDetailWebView.getSettings().setJavaScriptEnabled(true);
         // enable Dom storage
-        NewsDetailWebView.getSettings().setDomStorageEnabled(true);
+        mNewsDetailWebView.getSettings().setDomStorageEnabled(true);
 
-        NewsDetailWebView.loadUrl(url);
+        mNewsDetailWebView.loadUrl(url);
     }
 
     private void backButtonOnClick() {
-        backButton.setOnClickListener(new View.OnClickListener() {
+        mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Leave();
@@ -114,17 +113,20 @@ public class NewsDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (NewsDetailWebView.canGoBack()) {
-            NewsDetailWebView.goBack();
+        if (mNewsDetailWebView.canGoBack()) {
+            mNewsDetailWebView.goBack();
         } else {
             Leave();
         }
     }
 
+    /**
+     * back to MainActivity
+     */
     public void Leave() {
-        NewsDetailWebView.clearCache(true);
-        NewsDetailWebView.clearHistory();
-        NewsDetailWebView.clearFormData();
+        mNewsDetailWebView.clearCache(true);
+        mNewsDetailWebView.clearHistory();
+        mNewsDetailWebView.clearFormData();
         finish();
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }

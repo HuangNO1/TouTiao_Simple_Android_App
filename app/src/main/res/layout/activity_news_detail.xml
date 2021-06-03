@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.NewsDetailActivity">
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+        android:id="@+id/app_bar"
         android:layout_height="40dp"
         android:layout_width="match_parent"
         android:background="@color/tabbed_bg">
@@ -18,7 +18,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/tool_bar"
                 android:layout_height="40dp"
                 android:layout_width="match_parent">
 
@@ -26,7 +26,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <Button
-                        android:id="@+id/backButton"
+                        android:id="@+id/button_back"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_margin="1dp"
@@ -39,7 +39,7 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
+        android:id="@+id/animation_view_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleX="0.7"
@@ -59,14 +59,14 @@
             tools:context=".ui.page.news_detail.NewsDetailFragment">
 
             <WebView
-                android:id="@+id/webView"
+                android:id="@+id/web_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
 
             <ProgressBar
-                android:id="@+id/progressBar"
+                android:id="@+id/progress_bar_loading"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"

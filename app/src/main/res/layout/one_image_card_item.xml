@@ -9,13 +9,13 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp">
     <TextView
-        android:id="@+id/source_url"
+        android:id="@+id/text_view_source_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/card_container"
+        android:id="@+id/layout_card_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -24,24 +24,25 @@
         android:layout_marginRight="16dp"
         android:orientation="vertical">
         <LinearLayout
-            android:id="@+id/title_bar"
+            android:id="@+id/layout_card_title_bar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="UseCompoundDrawables">
             <ImageView
-                android:id="@+id/avatar"
+                android:id="@+id/image_view_card_avatar"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="10dp"
                 tools:srcCompat="@drawable/avatar_1"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="MissingConstraints"
+                android:contentDescription="@string/avatar" />
 
             <TextView
-                android:id="@+id/card_title"
+                android:id="@+id/text_view_card_title"
                 style="@style/TextAppearance.MaterialComponents.Headline6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title goes here"
-
+                android:text="@string/title_goes_here"
                 app:layout_constraintBottom_toTopOf="@+id/avatar"
                 app:layout_constraintStart_toEndOf="@+id/avatar"
                 app:layout_constraintTop_toBottomOf="@+id/avatar"
@@ -53,15 +54,15 @@
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints">
             <TextView
-                android:id="@+id/card_subtitle"
+                android:id="@+id/text_view_card_subtitle"
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:layout_marginTop="8dp"
-                android:text="Subtitle goes here" />
+                android:text="@string/subtitle_goes_here" />
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/image_view_card_image"
                 android:layout_width="120dp"
                 android:layout_height="80dp"
                 android:adjustViewBounds="true"
@@ -69,15 +70,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/rem_blog" />
+                app:srcCompat="@drawable/rem_blog"
+                android:contentDescription="@string/image_url"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
         <TextView
-            android:id="@+id/card_bottom_text"
+            android:id="@+id/text_view_card_bottom_text"
             style="@style/TextAppearance.MaterialComponents.Overline"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="8dp"
-            android:text="comment"
+            android:text="@string/comment"
             android:layout_weight="1"
             app:layout_constraintBottom_toBottomOf="@+id/card_container"
             app:layout_constraintStart_toStartOf="@+id/card_subtitle" />

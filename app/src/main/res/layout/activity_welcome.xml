@@ -8,7 +8,7 @@
     tools:context=".activity.WelcomeActivity">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
+        android:id="@+id/animation_view_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleX="1.3"
@@ -24,7 +24,7 @@
         app:lottie_loop="false" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/text_view_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="84dp"
@@ -34,7 +34,7 @@
         android:textColor="#AC3A31"
         android:textSize="55sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/animation_view"
+        app:layout_constraintBottom_toTopOf="@+id/animation_view_loading"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent" />

@@ -12,7 +12,7 @@
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:background="@drawable/search_bg"
-        >
+        tools:ignore="UselessParent">
 
         <Button
             android:layout_width="20dp"

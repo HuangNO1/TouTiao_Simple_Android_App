@@ -3,14 +3,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/news_channel_fragment"
+    android:id="@+id/fragment_news_channel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.page.news_channel.NewsChannelFragment">
+    tools:context=".ui.page.newsChannel.NewsChannelFragment">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
+        android:id="@+id/animation_view_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleX="0.7"
@@ -28,13 +28,13 @@
         tools:ignore="MissingConstraints">
 
         <TextView
-            android:id="@+id/section_label"
+            android:id="@+id/text_view_section_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
         <!-- Recycler View widget-->
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/refreshLayout"
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/refresh_layout_card_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -44,7 +44,7 @@
                 tools:ignore="MissingClass" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+                android:id="@+id/recycler_view_card_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:nestedScrollingEnabled="true"
@@ -57,15 +57,16 @@
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/screen_mask"
+    <View
+        android:id="@+id/view_screen_mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.4"
+        android:alpha="0.3"
         android:background="#FFFFFF"
         android:elevation="5dp"
         android:nestedScrollingEnabled="false"
         android:clickable="true"
-        android:focusable="true" />
+        android:focusable="true"
+        android:contentDescription="@string/image_url" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

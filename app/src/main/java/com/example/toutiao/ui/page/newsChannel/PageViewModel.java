@@ -1,13 +1,14 @@
-package com.example.toutiao.ui.page.news_channel;
+package com.example.toutiao.ui.page.newsChannel;
 
-import androidx.arch.core.util.Function;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * A [ViewModel] for NewsChannelFragment
+ */
+
 public class PageViewModel extends ViewModel {
-    private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
+    private final MutableLiveData<Integer> mIndex = new MutableLiveData<>();
 //    private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
 //        @Override
 //        public String apply(Integer input) {
@@ -15,7 +16,7 @@ public class PageViewModel extends ViewModel {
 //        }
 //    });
 
-    private MutableLiveData<String> mCategory = new MutableLiveData<>();
+    private final MutableLiveData<String> mCategory = new MutableLiveData<>();
 
     public void setIndex(int index) {
         mIndex.setValue(index);
@@ -33,7 +34,7 @@ public class PageViewModel extends ViewModel {
         return mCategory;
     }
 
-    public MutableLiveData<Integer> getmIndex() {
+    public MutableLiveData<Integer> getIndex() {
         return mIndex;
     }
 }

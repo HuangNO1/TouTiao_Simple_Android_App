@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.page.news_channel;
+package com.example.toutiao.ui.page.newsChannel;
 
 import android.content.Context;
 
@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.toutiao.R;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -35,6 +37,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         mContext = context;
     }
 
+    @NotNull
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.

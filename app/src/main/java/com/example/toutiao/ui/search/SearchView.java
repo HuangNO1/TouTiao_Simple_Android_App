@@ -16,23 +16,23 @@ public class SearchView extends LinearLayout implements TextWatcher, View.OnClic
     /**
      * 输入框
      */
-    private EditText et_search;
+    private final EditText mSearchEditText;
     /**
      * 输入框后面的那个清除按钮
      */
-    private Button bt_clear;
+    private final Button mClearButton;
 
 
     public SearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        /**加载布局文件*/
+        /** 加载布局文件 */
         LayoutInflater.from(context).inflate(R.layout.search_bar, this, true);
-        /***找出控件*/
-        et_search = (EditText) findViewById(R.id.et_search);
-        bt_clear = (Button) findViewById(R.id.bt_clear);
-        bt_clear.setVisibility(GONE);
-        et_search.addTextChangedListener(this);
-        bt_clear.setOnClickListener(this);
+        /** 找出控件 */
+        mSearchEditText = findViewById(R.id.et_search);
+        mClearButton = (Button) findViewById(R.id.bt_clear);
+        mClearButton.setVisibility(GONE);
+        mSearchEditText.addTextChangedListener(this);
+        mClearButton.setOnClickListener(this);
     }
 
 
@@ -54,16 +54,16 @@ public class SearchView extends LinearLayout implements TextWatcher, View.OnClic
     @Override
     public void afterTextChanged(Editable editable) {
         /**获取输入文字**/
-        String input = et_search.getText().toString().trim();
+        String input = mSearchEditText.getText().toString().trim();
         if (input.isEmpty()) {
-            bt_clear.setVisibility(GONE);
+            mClearButton.setVisibility(GONE);
         } else {
-            bt_clear.setVisibility(VISIBLE);
+            mClearButton.setVisibility(VISIBLE);
         }
     }
 
     @Override
     public void onClick(View view) {
-        et_search.setText("");
+        mSearchEditText.setText("");
     }
 }

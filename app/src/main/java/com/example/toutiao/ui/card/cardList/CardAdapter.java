@@ -1,150 +1,160 @@
-package com.example.toutiao.ui.card.card_list;
+package com.example.toutiao.ui.card.cardList;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.toutiao.R;
-import com.example.toutiao.activity.MainActivity;
 import com.example.toutiao.activity.NewsDetailActivity;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<CardItemDataModel> dataModelList;
-    private Context mContext;
+/**
+ * A card adapter to help perform to control card item's render in news channel fragment
+ */
 
+public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final List<CardItemDataModel> mDataModelList;
+    private final Context mContext;
+
+    // No image style card view holder
     class NoImageCardViewHolder extends RecyclerView.ViewHolder {
-        public ImageView avatarView;
-        public TextView titleTextView;
-        public TextView subTitleTextView;
-        public TextView bottomTextView;
-        public TextView sourceUrlTextView;
+        private final ImageView mAvatarView;
+        private final TextView mTitleTextView;
+        private final TextView mSubTitleTextView;
+        private final TextView mBottomTextView;
+        private final TextView mSourceUrlTextView;
 
         public NoImageCardViewHolder(@NonNull View itemView) {
             super(itemView);
-            avatarView = itemView.findViewById(R.id.avatar);
-            titleTextView = itemView.findViewById(R.id.card_title);
-            subTitleTextView = itemView.findViewById(R.id.card_subtitle);
-            bottomTextView = itemView.findViewById(R.id.card_bottom_text);
-            sourceUrlTextView =  itemView.findViewById(R.id.source_url);
+            mAvatarView = itemView.findViewById(R.id.image_view_card_avatar);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
+            mBottomTextView = itemView.findViewById(R.id.text_view_card_bottom_text);
+            mSourceUrlTextView =  itemView.findViewById(R.id.text_view_source_url);
 
             onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            Picasso.get().load(dataModel.getAvatar()).into(avatarView);
+            Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
+            // deal with title's length and subtitle's length
             String title = dataModel.getTitle();
             if(title.length() > 15) {
                 title = title.substring(0, 16);
                 title += "...";
             }
-            titleTextView.setText(title);
+            mTitleTextView.setText(title);
             String subTitle = dataModel.getSubTitle();
             if(subTitle.length() > 70) {
                 subTitle = subTitle.substring(0, 69);
                 subTitle += "...";
             }
-            subTitleTextView.setText(subTitle);
-            bottomTextView.setText(dataModel.getBottomText());
-            sourceUrlTextView.setText(dataModel.getDetailUrl());
+            mSubTitleTextView.setText(subTitle);
+            mBottomTextView.setText(dataModel.getBottomText());
+            mSourceUrlTextView.setText(dataModel.getDetailUrl());
         }
     }
 
+    // One image style card view holder
     class OneImageCardViewHolder extends RecyclerView.ViewHolder {
-        public ImageView avatarView;
-        public ImageView cardImageView;
-        public TextView titleTextView;
-        public TextView subTitleTextView;
-        public TextView bottomTextView;
-        public TextView sourceUrlTextView;
+        private final ImageView mAvatarView;
+        private final TextView mTitleTextView;
+        private final TextView mSubTitleTextView;
+        private final TextView mBottomTextView;
+        private final TextView mSourceUrlTextView;
+        private final ImageView mCardImageView;
 
         public OneImageCardViewHolder(@NonNull View itemView) {
             super(itemView);
-            avatarView = itemView.findViewById(R.id.avatar);
-            cardImageView = itemView.findViewById(R.id.imageView);
-            titleTextView = itemView.findViewById(R.id.card_title);
-            subTitleTextView = itemView.findViewById(R.id.card_subtitle);
-            bottomTextView = itemView.findViewById(R.id.card_bottom_text);
-            sourceUrlTextView =  itemView.findViewById(R.id.source_url);
+            mAvatarView = itemView.findViewById(R.id.image_view_card_avatar);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
+            mBottomTextView = itemView.findViewById(R.id.text_view_card_bottom_text);
+            mSourceUrlTextView =  itemView.findViewById(R.id.text_view_source_url);
+            mCardImageView =  itemView.findViewById(R.id.image_view_card_image);
 
             onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            Picasso.get().load(dataModel.getAvatar()).into(avatarView);
-            Picasso.get().load(dataModel.getImageDrawable()).into(cardImageView);
+            Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
+            Picasso.get().load(dataModel.getImageDrawable()).into(mCardImageView);
             String title = dataModel.getTitle();
+            // deal with title's length and subtitle's length
             if(title.length() > 15) {
                 title = title.substring(0, 14);
                 title += "...";
             }
-            titleTextView.setText(title);
+            mTitleTextView.setText(title);
             String subTitle = dataModel.getSubTitle();
             if(subTitle.length() > 70) {
                 subTitle = subTitle.substring(0, 69);
                 subTitle += "...";
             }
-            subTitleTextView.setText(subTitle);
-            bottomTextView.setText(dataModel.getBottomText());
-            sourceUrlTextView.setText(dataModel.getDetailUrl());
+            mSubTitleTextView.setText(subTitle);
+            mBottomTextView.setText(dataModel.getBottomText());
+            mSourceUrlTextView.setText(dataModel.getDetailUrl());
         }
     }
 
+    // Three image style card view holder
     class ThreeImageCardViewHolder extends RecyclerView.ViewHolder {
-        public ImageView avatarView;
-        public ImageView cardImageView1;
-        public ImageView cardImageView2;
-        public ImageView cardImageView3;
-        public TextView titleTextView;
-        public TextView subTitleTextView;
-        public TextView bottomTextView;
-        public TextView sourceUrlTextView;
+        private final ImageView mAvatarView;
+        private final TextView mTitleTextView;
+        private final TextView mSubTitleTextView;
+        private final TextView mBottomTextView;
+        private final TextView mSourceUrlTextView;
+        private final ImageView mCardImageView1;
+        private final ImageView mCardImageView2;
+        private final ImageView mCardImageView3;
 
         public ThreeImageCardViewHolder(@NonNull View itemView) {
             super(itemView);
-            avatarView = itemView.findViewById(R.id.avatar);
-            cardImageView1 = itemView.findViewById(R.id.imageView1);
-            cardImageView2 = itemView.findViewById(R.id.imageView2);
-            cardImageView3 = itemView.findViewById(R.id.imageView3);
-            titleTextView = itemView.findViewById(R.id.card_title);
-            subTitleTextView = itemView.findViewById(R.id.card_subtitle);
-            bottomTextView = itemView.findViewById(R.id.card_bottom_text);
-            sourceUrlTextView =  itemView.findViewById(R.id.source_url);
+            mAvatarView = itemView.findViewById(R.id.image_view_card_avatar);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
+            mBottomTextView = itemView.findViewById(R.id.text_view_card_bottom_text);
+            mSourceUrlTextView =  itemView.findViewById(R.id.text_view_source_url);
+            mCardImageView1 = itemView.findViewById(R.id.image_view_image_1);
+            mCardImageView2 = itemView.findViewById(R.id.image_view_image_2);
+            mCardImageView3 = itemView.findViewById(R.id.image_view_image_3);
 
             onClickListener(itemView);
         }
 
         public void bindData(CardItemDataModel dataModel, Context context) {
-            Picasso.get().load(dataModel.getAvatar()).into(avatarView);
+            Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
             ArrayList<String> images = dataModel.getThreeImageDrawable();
-            Picasso.get().load(images.get(0)).into(cardImageView1);
-            Picasso.get().load(images.get(1)).into(cardImageView2);
-            Picasso.get().load(images.get(2)).into(cardImageView3);
+            Picasso.get().load(images.get(0)).into(mCardImageView1);
+            Picasso.get().load(images.get(1)).into(mCardImageView2);
+            Picasso.get().load(images.get(2)).into(mCardImageView3);
+            // deal with title's length and subtitle's length
             String title = dataModel.getTitle();
             if(title.length() > 15) {
                 title = title.substring(0, 16);
                 title += "...";
             }
-            titleTextView.setText(title);
+            mTitleTextView.setText(title);
             String subTitle = dataModel.getSubTitle();
             if(subTitle.length() > 70) {
                 subTitle = subTitle.substring(0, 69);
                 subTitle += "...";
             }
-            subTitleTextView.setText(subTitle);
-            bottomTextView.setText(dataModel.getBottomText());
-            sourceUrlTextView.setText(dataModel.getDetailUrl());
+            mSubTitleTextView.setText(subTitle);
+            mBottomTextView.setText(dataModel.getBottomText());
+            mSourceUrlTextView.setText(dataModel.getDetailUrl());
         }
     }
 
@@ -154,9 +164,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Activity activity = (Activity) mContext;
-                TextView source_url = itemView.findViewById(R.id.source_url);
+                TextView mSourceUrl = itemView.findViewById(R.id.text_view_source_url);
                 Intent intent = new Intent(activity,NewsDetailActivity.class);
-                intent.putExtra("source_url", source_url.getText().toString());
+                intent.putExtra("source_url", mSourceUrl.getText().toString());
                 mContext.startActivity(intent);
                 activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
             }
@@ -165,7 +175,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(final int position) {
-        switch(dataModelList.get(position).getItemType()) {
+        switch(mDataModelList.get(position).getItemType()) {
             case CardItemDataModel.NO_IMAGE_TYPE:
                 return CardItemDataModel.NO_IMAGE_TYPE;
             case CardItemDataModel.ONE_IMAGE_TYPE:
@@ -178,13 +188,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public CardAdapter(List<CardItemDataModel> modelList, Context context) {
-        dataModelList = modelList;
+        mDataModelList = modelList;
         mContext = context;
     }
 
     @Override
     public int getItemCount() {
-        return dataModelList.size();
+        return mDataModelList.size();
     }
 
     @NonNull
@@ -210,8 +220,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        CardItemDataModel object = dataModelList.get(position);
+    public void onBindViewHolder(@NotNull final RecyclerView.ViewHolder holder, final int position) {
+        CardItemDataModel object = mDataModelList.get(position);
 
         if(object != null) {
             switch (object.getItemType()) {
