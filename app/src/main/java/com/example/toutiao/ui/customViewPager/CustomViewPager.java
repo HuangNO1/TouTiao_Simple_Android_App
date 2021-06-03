@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 public class CustomViewPager extends ViewPager {
@@ -38,6 +40,11 @@ public class CustomViewPager extends ViewPager {
         }
 
         return false;
+    }
+
+    @Override
+    public void setAdapter(@Nullable @org.jetbrains.annotations.Nullable PagerAdapter adapter) {
+        super.setAdapter(adapter);
     }
 
     public void setPagingEnabled(boolean enabled) {

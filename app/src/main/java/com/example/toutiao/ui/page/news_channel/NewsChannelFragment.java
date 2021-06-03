@@ -4,18 +4,22 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.PagerAdapter;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,7 +79,8 @@ public class NewsChannelFragment extends Fragment {
     private LottieAnimationView animationView;
 //    private SwipeRefreshLayout swipeContainer;
     private RefreshLayout refreshLayout;
-    private CustomViewPager customViewPager;
+//    private CustomViewPager customViewPager;
+    private ImageView mScreenMask;
 
     private List<CardItemDataModel> dataModelList = new ArrayList<>();
     private String category;
@@ -116,8 +121,15 @@ public class NewsChannelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
+        isLoadMore = false;
+        isRefresh = false;
 
-        customViewPager = view.findViewById(R.id.custom_viewPager);
+//        customViewPager = view.findViewById(R.id.custom_viewPager);
+//        View thisFragment = view.findViewById(R.id.news_channel_fragment);
+//        thisFragment.setClickable(false);
+//        view.setOnTouchListener();
+        mScreenMask = view.findViewById(R.id.screen_mask);
+        mScreenMask.setVisibility(View.GONE);
 
         animationView = view.findViewById(R.id.animation_view);
         animationView.setAnimation("load-animation.json");
@@ -138,8 +150,6 @@ public class NewsChannelFragment extends Fragment {
         mAdapter = new CardAdapter(dataModelList, container.getContext());
         mRecyclerView.setAdapter(mAdapter);
 
-        isLoadMore = false;
-        isRefresh = false;
         refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshHeader(new BezierRadarHeader(getContext()));
         refreshLayout.setRefreshFooter(new BallPulseFooter(getContext()));
@@ -148,11 +158,13 @@ public class NewsChannelFragment extends Fragment {
             public void onRefresh(RefreshLayout refreshlayout) {
                 try {
                     refreshNews();
-                    customViewPager.setPagingEnabled(false);
+                    mScreenMask.setVisibility(View.VISIBLE);
+//                    customViewPager.setPagingEnabled(false);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
-                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+                //refreshlayout.finishRefresh(true/*,false*/);//传入false表示刷新失败
+                refreshLayout.autoRefresh();
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -160,11 +172,13 @@ public class NewsChannelFragment extends Fragment {
             public void onLoadMore(RefreshLayout refreshlayout) {
                 try {
                     loadMoreNews();
-                    customViewPager.setPagingEnabled(false);
+                    mScreenMask.setVisibility(View.VISIBLE);
+//                    customViewPager.setPagingEnabled(false);
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
-                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+                //refreshlayout.finishLoadMore(true/*,false*/);//传入false表示加载失败
+                refreshLayout.autoLoadMore();
             }
         });
 
@@ -189,7 +203,7 @@ public class NewsChannelFragment extends Fragment {
     // render the recycler view card list
     public void renderCardList() {
         System.out.println("render card, news list size: " + newsDataModelList.size());
-        for (int i = 0; i < newsDataModelList.size(); ++i) {
+        for (int i = 0; i < newsDataModelList.size(); i++) {
             int type = newsDataModelList.get(i).getNews_card_style_type();
             String news_id = newsDataModelList.get(i).getNews_id();
             String news_title = newsDataModelList.get(i).getNews_title();
@@ -240,6 +254,9 @@ public class NewsChannelFragment extends Fragment {
             }
         }
         animationView.setVisibility(View.GONE);
+        mScreenMask.setVisibility(View.GONE);
+        refreshLayout.finishRefresh();
+        refreshLayout.finishLoadMore(/*,false*/);
 //        swipeContainer.setRefreshing(false);
 //        mRecyclerView.setNestedScrollingEnabled(false);
 //        // use a linear layout manager
@@ -255,7 +272,7 @@ public class NewsChannelFragment extends Fragment {
             mLayoutManager.smoothScrollToPosition(mRecyclerView, new RecyclerView.State(), item - 1);
             isLoadMore = false;
         }
-        customViewPager.setPagingEnabled(true);
+//        customViewPager.setPagingEnabled(true);
     }
 
     final String base_url = "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
