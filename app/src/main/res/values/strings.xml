@@ -28,4 +28,5 @@
     <string name="comment">comment</string>
     <string name="avatar">Avatar</string>
     <string name="image_url">imageUrl</string>
+    <string name="scrolltotop">scrollToTop</string>
 </resources>

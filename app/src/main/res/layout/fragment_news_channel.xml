@@ -21,10 +21,10 @@
         app:lottie_loop="true" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginBottom="60dp"
         tools:ignore="MissingConstraints">
 
         <TextView
@@ -55,6 +55,18 @@
                 android:layout_height="wrap_content" />
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_scroll_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/scrolltotop"
+        android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+        app:layout_anchorGravity="bottom|right|end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints,RtlHardcoded" />
 
     <View
         android:id="@+id/view_screen_mask"

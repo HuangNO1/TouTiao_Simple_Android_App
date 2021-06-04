@@ -57,7 +57,8 @@ import static com.example.toutiao.ui.card.cardList.CardItemDataModel.THREE_IMAGE
  * create an instance of this fragment.
  */
 public class NewsChannelFragment extends Fragment {
-    private final static String BASE_URL = "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
+    private final static String BASE_URL =
+            "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
     private static final String[] CATEGORY_ATTR = new String[]{
             "__all__",
             "news_tech",
@@ -69,7 +70,8 @@ public class NewsChannelFragment extends Fragment {
             "news_finance",
             "digital"
     };
-    private final static String DEFAULT_AVATAR = "https://img.88icon.com/download/jpg/20200901/84083236c883964781afea41f1ea4e9c_512_511.jpg!88bg";
+    private final static String DEFAULT_AVATAR =
+            "https://img.88icon.com/download/jpg/20200901/84083236c883964781afea41f1ea4e9c_512_511.jpg!88bg";
     ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
     private PageViewModel mPageViewModel;
     private RecyclerView mCardListRecyclerView;
@@ -191,7 +193,7 @@ public class NewsChannelFragment extends Fragment {
         return view;
     }
 
-    // render the recycler view card list
+    // render the recycler view card list when init and refreshing
     public void initRenderCardList() {
         Log.v("start init render", "render init card, news list size: " + mNewsDataModelList.size());
         for (int i = 0; i < mNewsDataModelList.size(); i++) {
@@ -253,6 +255,9 @@ public class NewsChannelFragment extends Fragment {
         mIsRefresh = false;
     }
 
+    /**
+     * render the recycler view card list when loading more
+     */
     private void loadMoreRenderCardList() {
         Log.v("start more render", "render more card, news list size: " + mNewsDataModelList.size());
 
