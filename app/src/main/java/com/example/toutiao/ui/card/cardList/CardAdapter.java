@@ -3,6 +3,7 @@ package com.example.toutiao.ui.card.cardList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -190,6 +191,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public CardAdapter(List<CardItemDataModel> modelList, Context context) {
         mDataModelList = modelList;
         mContext = context;
+    }
+
+    public void setDataModelList(List<CardItemDataModel> modelList) {
+        mDataModelList.addAll(modelList);
     }
 
     @Override

@@ -71,14 +71,12 @@ public class NewsChannelFragment extends Fragment {
     ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
     private PageViewModel mPageViewModel;
     private RecyclerView mCardListRecyclerView;
-    private RecyclerView.Adapter mCardListAdapter;
+    private CardAdapter mCardListAdapter;
     private RecyclerView.LayoutManager mCardListLayoutManager;
     private LottieAnimationView mLoadingAnimationView;
-    //    private SwipeRefreshLayout swipeContainer;
     private RefreshLayout mCardListRefreshLayout;
-    //    private CustomViewPager customViewPager;
     private View mScreenMaskView;
-    private final List<CardItemDataModel> mDataModelList = new ArrayList<>();
+    private final List<CardItemDataModel> mCardDataModelList = new ArrayList<>();
     private String mCategory;
     private int mIndex;
     private boolean mIsRefresh;
@@ -140,7 +138,7 @@ public class NewsChannelFragment extends Fragment {
         mCardListRecyclerView.setLayoutManager(mCardListLayoutManager);
 
         // specify an adapter and pass in our data model list
-        mCardListAdapter = new CardAdapter(mDataModelList, container.getContext());
+        mCardListAdapter = new CardAdapter(mCardDataModelList, container.getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
         mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);
@@ -191,8 +189,8 @@ public class NewsChannelFragment extends Fragment {
     }
 
     // render the recycler view card list
-    public void renderCardList() {
-        Log.v("start render", "render card, news list size: " + mNewsDataModelList.size());
+    public void initRenderCardList() {
+        Log.v("start init render", "render init card, news list size: " + mNewsDataModelList.size());
         for (int i = 0; i < mNewsDataModelList.size(); i++) {
             int type = mNewsDataModelList.get(i).getNewsCardStyleType();
             String newsId = mNewsDataModelList.get(i).getNewsId();
@@ -204,7 +202,7 @@ public class NewsChannelFragment extends Fragment {
             String newsSourceUrl = mNewsDataModelList.get(i).getNewsSourceUrl();
 
             if (type == NO_IMAGE_TYPE) {
-                mDataModelList.add(new CardItemDataModel(
+                mCardDataModelList.add(new CardItemDataModel(
                         NO_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -216,7 +214,7 @@ public class NewsChannelFragment extends Fragment {
                 ));
             } else if (type == ONE_IMAGE_TYPE) {
                 String middleImage = mNewsDataModelList.get(i).getNewsImageUrl();
-                mDataModelList.add(new CardItemDataModel(
+                mCardDataModelList.add(new CardItemDataModel(
                         ONE_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -230,7 +228,7 @@ public class NewsChannelFragment extends Fragment {
 
             } else if (type == THREE_IMAGE_TYPE) {
                 ArrayList<String> newsThreeImage = mNewsDataModelList.get(i).getNewsThreeImage();
-                mDataModelList.add(new CardItemDataModel(
+                mCardDataModelList.add(new CardItemDataModel(
                         THREE_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -246,17 +244,74 @@ public class NewsChannelFragment extends Fragment {
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
         mCardListRefreshLayout.finishRefresh();
-        mCardListRefreshLayout.finishLoadMore();
-
-        // specify an adapter and pass in our data model list
-        int item = mCardListAdapter.getItemCount();
-        mCardListAdapter = new CardAdapter(mDataModelList, getContext());
+        mCardListAdapter = new CardAdapter(mCardDataModelList, getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
-        if (mIsLoadMore) {
-            mCardListLayoutManager.smoothScrollToPosition(mCardListRecyclerView, new RecyclerView.State(), item - 1);
-            mIsLoadMore = false;
+        mIsRefresh = false;
+    }
+
+    private void loadMoreRenderCardList() {
+        Log.v("start more render", "render more card, news list size: " + mNewsDataModelList.size());
+
+        List<CardItemDataModel> tempCardDataModelList = new ArrayList<>();
+
+        for (int i = 0; i < mNewsDataModelList.size(); i++) {
+            int type = mNewsDataModelList.get(i).getNewsCardStyleType();
+            String newsId = mNewsDataModelList.get(i).getNewsId();
+            String newsTitle = mNewsDataModelList.get(i).getNewsTitle();
+            String newsAbstract = mNewsDataModelList.get(i).getNewsAbstract();
+            int newsCommentsCount = mNewsDataModelList.get(i).getNewsCommentsCount();
+            String newsSource = mNewsDataModelList.get(i).getNewsSource();
+            String newsMediaAvatarUrl = mNewsDataModelList.get(i).getNewsMediaAvatarUrl();
+            String newsSourceUrl = mNewsDataModelList.get(i).getNewsSourceUrl();
+
+            if (type == NO_IMAGE_TYPE) {
+                tempCardDataModelList.add(new CardItemDataModel(
+                        NO_IMAGE_TYPE,
+                        newsId,
+                        newsTitle,
+                        newsAbstract,
+                        newsCommentsCount,
+                        newsSource,
+                        newsMediaAvatarUrl,
+                        newsSourceUrl
+                ));
+            } else if (type == ONE_IMAGE_TYPE) {
+                String middleImage = mNewsDataModelList.get(i).getNewsImageUrl();
+                tempCardDataModelList.add(new CardItemDataModel(
+                        ONE_IMAGE_TYPE,
+                        newsId,
+                        newsTitle,
+                        newsAbstract,
+                        newsCommentsCount,
+                        newsSource,
+                        newsMediaAvatarUrl,
+                        newsSourceUrl,
+                        middleImage
+                ));
+
+            } else if (type == THREE_IMAGE_TYPE) {
+                ArrayList<String> newsThreeImage = mNewsDataModelList.get(i).getNewsThreeImage();
+                tempCardDataModelList.add(new CardItemDataModel(
+                        THREE_IMAGE_TYPE,
+                        newsId,
+                        newsTitle,
+                        newsAbstract,
+                        newsCommentsCount,
+                        newsSource,
+                        newsMediaAvatarUrl,
+                        newsSourceUrl,
+                        newsThreeImage
+                ));
+            }
         }
+        mLoadingAnimationView.setVisibility(View.GONE);
+        mScreenMaskView.setVisibility(View.GONE);
+        mCardListRefreshLayout.finishLoadMore();
+        mCardListAdapter.setDataModelList(tempCardDataModelList);
+        Log.v("after load more", "card list size: " + mCardListAdapter.getItemCount());
+        mIsLoadMore = false;
+        mCardListAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -267,7 +322,7 @@ public class NewsChannelFragment extends Fragment {
      */
     public void getInitNews() throws IOException, JSONException {
         mNewsDataModelList.clear();
-        mDataModelList.clear();
+        mCardDataModelList.clear();
         mLoadingAnimationView.setVisibility(View.VISIBLE);
         mMaxBehotTime = 0;
         OkHttpClient client = new OkHttpClient();
@@ -301,7 +356,7 @@ public class NewsChannelFragment extends Fragment {
     public void refreshNews() throws IOException, JSONException {
         mIsRefresh = true;
         mNewsDataModelList.clear();
-        mDataModelList.clear();
+        mCardDataModelList.clear();
         mMaxBehotTime = 0;
         OkHttpClient client = new OkHttpClient();
         Log.v("request url", String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]));
@@ -386,7 +441,11 @@ public class NewsChannelFragment extends Fragment {
 
         new Thread() {
             public void run() {
-                handler.post(() -> renderCardList());
+                if(mIsLoadMore) {
+                    handler.post(() -> loadMoreRenderCardList());
+                } else {
+                    handler.post(() -> initRenderCardList());
+                }
             }
         }.start();
     }
