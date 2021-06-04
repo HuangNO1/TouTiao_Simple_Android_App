@@ -25,22 +25,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:ignore="MissingConstraints">
+        tools:ignore="MissingClass,MissingConstraints">
 
         <TextView
             android:id="@+id/text_view_section_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
-        <!-- Recycler View widget-->
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/refresh_layout_card_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <com.scwang.smart.refresh.header.BezierRadarHeader
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout_card_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_card_list"
@@ -50,17 +47,22 @@
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="vertical" />
 
-            <com.scwang.smart.refresh.footer.BallPulseFooter
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+            <Button
+                android:id="@+id/button_loading_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading_more"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:clickable="false"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_scroll_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginBottom="60dp"
         android:contentDescription="@string/scrolltotop"
         android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
         app:layout_anchorGravity="bottom|right|end"

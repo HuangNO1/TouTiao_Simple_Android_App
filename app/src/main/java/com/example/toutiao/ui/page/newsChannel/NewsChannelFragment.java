@@ -1,5 +1,9 @@
 package com.example.toutiao.ui.page.newsChannel;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,43 +13,49 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
+import com.example.toutiao.activity.MainActivity;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.cardList.CardAdapter;
 import com.example.toutiao.ui.card.cardList.CardItemDataModel;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.scwang.smart.refresh.footer.BallPulseFooter;
-import com.scwang.smart.refresh.header.BezierRadarHeader;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.Buffer;
 
 import static com.example.toutiao.ui.card.cardList.CardItemDataModel.NO_IMAGE_TYPE;
 import static com.example.toutiao.ui.card.cardList.CardItemDataModel.ONE_IMAGE_TYPE;
@@ -55,8 +65,9 @@ import static com.example.toutiao.ui.card.cardList.CardItemDataModel.THREE_IMAGE
  * A simple {@link Fragment} subclass.
  * Use the {@link NewsChannelFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * 让 fragment 实现 BGARefreshLayoutDelegate 接口
  */
-public class NewsChannelFragment extends Fragment {
+public class NewsChannelFragment extends Fragment{
     private final static String BASE_URL =
             "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
     private static final String[] CATEGORY_ATTR = new String[]{
@@ -78,7 +89,8 @@ public class NewsChannelFragment extends Fragment {
     private CardAdapter mCardListAdapter;
     private RecyclerView.LayoutManager mCardListLayoutManager;
     private LottieAnimationView mLoadingAnimationView;
-    private RefreshLayout mCardListRefreshLayout;
+    private SwipeRefreshLayout mCardListRefreshLayout;
+    private Button mLoadingMoreButton;
     private View mScreenMaskView;
     private final List<CardItemDataModel> mCardDataModelList = new ArrayList<>();
     private String mCategory;
@@ -131,8 +143,30 @@ public class NewsChannelFragment extends Fragment {
         mLoadingAnimationView.setAnimation("load-animation.json");
         mLoadingAnimationView.setSpeed(1);
         mLoadingAnimationView.playAnimation();
+        mLoadingMoreButton = view.findViewById(R.id.button_loading_more);
+        mLoadingMoreButton.setVisibility(View.GONE);
         // cardList
         mCardListRecyclerView = view.findViewById(R.id.recycler_view_card_list);
+        mCardListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (! recyclerView.canScrollVertically(1)){ //1 for down
+//                    if (isInternetConnection()) {
+//                        // 如果网络可用，则异步加载网络数据，并返回 true，显示正在加载更多
+                        try {
+                            loadMoreNews();
+                            mScreenMaskView.setVisibility(View.VISIBLE);
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+//                    } else {
+//                        // 网络不可用
+//                        Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
+//                    }
+                }
+            }
+        });
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -147,41 +181,38 @@ public class NewsChannelFragment extends Fragment {
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
         mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);
-        mCardListRefreshLayout.setRefreshHeader(new BezierRadarHeader(container.getContext()));
-        mCardListRefreshLayout.setRefreshFooter(new BallPulseFooter(container.getContext()));
-        mCardListRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        mCardListRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh(@NotNull RefreshLayout refreshlayout) {
-                try {
-                    refreshNews();
-                    mScreenMaskView.setVisibility(View.VISIBLE);
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-                // refreshlayout.finishRefresh(true/*,false*/);
-                mCardListRefreshLayout.autoRefresh(); //传入false表示刷新失败
-            }
-        });
-        mCardListRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NotNull RefreshLayout refreshlayout) {
-                try {
-                    loadMoreNews();
-                    mScreenMaskView.setVisibility(View.VISIBLE);
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-                //refreshlayout.finishLoadMore(true/*,false*/);
-                mCardListRefreshLayout.autoLoadMore(); //传入false表示加载失败
+            public void onRefresh() {
+//                if (isInternetConnection()) {
+//                    // 如果网络可用，则异步加载网络数据，并返回 true，显示正在加载更多
+                    try {
+                        refreshNews();
+                        mScreenMaskView.setVisibility(View.VISIBLE);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+//                } else {
+//                    // 网络不可用
+//                    Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
 
         TextView mSectionLabelTextView = view.findViewById(R.id.text_view_section_label);
-        try {
-            getInitNews();
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
+
+//        if (isInternetConnection()) {
+            // 如果网络可用，则异步加载网络数据，并返回 true，显示正在加载更多
+            try {
+                // init
+                getInitNews();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+//        } else {
+//            // 网络不可用
+//            Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
+//        }
 
         mPageViewModel.getCategory().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -248,7 +279,8 @@ public class NewsChannelFragment extends Fragment {
         }
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
-        mCardListRefreshLayout.finishRefresh();
+        mLoadingMoreButton.setVisibility(View.VISIBLE);
+        mCardListRefreshLayout.setRefreshing(false);
         mCardListAdapter = new CardAdapter(mCardDataModelList, getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
@@ -315,7 +347,6 @@ public class NewsChannelFragment extends Fragment {
         }
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
-        mCardListRefreshLayout.finishLoadMore();
         mCardListAdapter.setDataModelList(tempCardDataModelList);
         Log.v("after load more", "card list size: " + mCardListAdapter.getItemCount());
         mIsLoadMore = false;
@@ -369,8 +400,11 @@ public class NewsChannelFragment extends Fragment {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
+                Log.v("json status", " " + response.code());
+                Log.v("json body", " " + (response.body() != null));
                 String jsonData = response.body().string();
-                responseBody(jsonData);
+                // deal with request body
+                dealWithResponseBody(jsonData);
                 mCookie = response.header("Set-Cookie");
                 Log.v("cookie", "set cookie: " + mCookie);
             }
@@ -406,8 +440,10 @@ public class NewsChannelFragment extends Fragment {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
-                String jsonData = Objects.requireNonNull(response.body()).string();
-                responseBody(jsonData);
+                Log.v("json status", " " + response.code());
+                Log.v("json body", " " + (response.body() != null));
+                String jsonData = response.body().string();
+                dealWithResponseBody(jsonData);
                 mCookie = response.header("Set-Cookie");
                 Log.v("cookie", "set cookie: " + mCookie);
             }
@@ -441,8 +477,10 @@ public class NewsChannelFragment extends Fragment {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
-                String jsonData = Objects.requireNonNull(response.body()).string();
-                responseBody(jsonData);
+                Log.v("json status", " " + response.code());
+                Log.v("json body", " " + (response.body() != null));
+                String jsonData = response.body().string();
+                dealWithResponseBody(jsonData);
                 mCookie = response.header("Set-Cookie");
                 Log.v("cookie", "set cookie: " + mCookie);
             }
@@ -452,8 +490,9 @@ public class NewsChannelFragment extends Fragment {
     /**
      * @param jsonData
      */
-    public void responseBody(String jsonData) {
+    public void dealWithResponseBody(String jsonData) {
         Log.v("deal with response", "string to JsonObject");
+        Log.v("deal with response", "json data\n" + jsonData);
         mResult = JsonParser.parseString(jsonData).getAsJsonObject();
         Log.v("deal with response", "result, before max_behot_time " + mMaxBehotTime);
         Log.v("deal with response", String.valueOf(mResult.getAsJsonObject("next").has("max_behot_time")));
@@ -570,6 +609,19 @@ public class NewsChannelFragment extends Fragment {
             );
         }
         mNewsDataModelList.add(temp);
+    }
+
+    public boolean isInternetConnection()
+    {
+        boolean connected = false;
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+        }
+        return  connected;
     }
 
 }
