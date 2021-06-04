@@ -159,14 +159,17 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    // Click the card item and move to NewsDetailActivity
+    /**
+     * Click the card item and move to NewsDetailActivity
+     * @param itemView
+     */
     public void onClickListener(@NonNull View itemView) {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Activity activity = (Activity) mContext;
                 TextView mSourceUrl = itemView.findViewById(R.id.text_view_source_url);
-                Intent intent = new Intent(activity,NewsDetailActivity.class);
+                Intent intent = new Intent(activity, NewsDetailActivity.class);
                 intent.putExtra("source_url", mSourceUrl.getText().toString());
                 mContext.startActivity(intent);
                 activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
@@ -193,6 +196,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mContext = context;
     }
 
+    /**
+     * load more news and add to mDataModelList
+     * @param modelList
+     */
     public void setDataModelList(List<CardItemDataModel> modelList) {
         mDataModelList.addAll(modelList);
     }

@@ -1,5 +1,6 @@
 package com.example.toutiao.ui.page.newsChannel;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -82,6 +84,7 @@ public class NewsChannelFragment extends Fragment {
     private boolean mIsRefresh;
     private boolean mIsLoadMore;
     private int mMaxBehotTime = 0;
+    private String mCookie;
     private JsonObject mResult;
     private JsonArray mNewsData;
     public NewsChannelFragment() {
@@ -314,6 +317,25 @@ public class NewsChannelFragment extends Fragment {
         mCardListAdapter.notifyDataSetChanged();
     }
 
+    private String getUserAgent() {
+        String userAgent = "";
+        try {
+            userAgent = WebSettings.getDefaultUserAgent(getContext());
+        } catch (Exception e) {
+            userAgent = System.getProperty("https.agent");
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0, length = userAgent.length(); i < length; i++) {
+            char c = userAgent.charAt(i);
+            if (c <= '\u001f' || c >= '\u007f') {
+                sb.append(String.format("\\u%04x", (int) c));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * a methods to init card list
      *
@@ -330,6 +352,7 @@ public class NewsChannelFragment extends Fragment {
         Request request = new Request.Builder()
                 .get()
                 .url(String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]))
+                .addHeader("User-Agent", getUserAgent())
                 .build();
         Call call = client.newCall(request);
 
@@ -343,6 +366,8 @@ public class NewsChannelFragment extends Fragment {
             public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
                 String jsonData = response.body().string();
                 responseBody(jsonData);
+                mCookie = response.header("Set-Cookie");
+                Log.v("cookie", "set cookie: " + mCookie);
             }
         });
     }
@@ -363,6 +388,8 @@ public class NewsChannelFragment extends Fragment {
         Request request = new Request.Builder()
                 .get()
                 .url(String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]))
+                .addHeader("User-Agent", getUserAgent())
+                .addHeader("Cookie", mCookie)
                 .build();
         Call call = client.newCall(request);
 
@@ -376,6 +403,8 @@ public class NewsChannelFragment extends Fragment {
             public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
                 String jsonData = Objects.requireNonNull(response.body()).string();
                 responseBody(jsonData);
+                mCookie = response.header("Set-Cookie");
+                Log.v("cookie", "set cookie: " + mCookie);
             }
         });
     }
@@ -394,6 +423,8 @@ public class NewsChannelFragment extends Fragment {
         Request request = new Request.Builder()
                 .get()
                 .url(String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]))
+                .addHeader("User-Agent", getUserAgent())
+                .addHeader("Cookie", mCookie)
                 .build();
         Call call = client.newCall(request);
 
@@ -407,6 +438,8 @@ public class NewsChannelFragment extends Fragment {
             public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
                 String jsonData = Objects.requireNonNull(response.body()).string();
                 responseBody(jsonData);
+                mCookie = response.header("Set-Cookie");
+                Log.v("cookie", "set cookie: " + mCookie);
             }
         });
     }
@@ -460,7 +493,7 @@ public class NewsChannelFragment extends Fragment {
         NewsDataModel temp;
         Log.v("deal with news object", "news_id " + object.get("group_id").getAsString());
         String newsId = object.get("group_id").getAsString();
-        Log.v("deal with news object", "news_id " + object.get("title").getAsString());
+        Log.v("deal with news object", "news_title " + object.get("title").getAsString());
         String newsTitle = object.get("title").getAsString();
         String newsAbstract = newsTitle;
         Log.v("deal with news object", "news_abstract " + object.has("abstract"));

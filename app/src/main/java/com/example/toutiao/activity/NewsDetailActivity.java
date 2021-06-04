@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -67,6 +68,8 @@ public class NewsDetailActivity extends AppCompatActivity {
     @SuppressLint("SetJavaScriptEnabled")
     private void setNewsDetailWebView(String url) {
 
+        // TODO: Make WebView Faster
+
         mNewsDetailWebView.setWebChromeClient(new WebChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
                 mProgressBar.setProgress(progress);
@@ -87,9 +90,9 @@ public class NewsDetailActivity extends AppCompatActivity {
             }
         });
 
-        // make rendering be faster
-        // no cache
-        //mNewsDetailWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        mNewsDetailWebView.getSettings().setAppCacheEnabled(true);
+        mNewsDetailWebView.getSettings().setLoadsImagesAutomatically(true);
+        mNewsDetailWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         // hardware acceleration
         mNewsDetailWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         // enabling javascript
