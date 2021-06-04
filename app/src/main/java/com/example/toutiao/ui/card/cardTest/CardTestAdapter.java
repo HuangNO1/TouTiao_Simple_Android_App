@@ -16,31 +16,31 @@ import com.example.toutiao.R;
 import java.util.List;
 
 public class CardTestAdapter extends RecyclerView.Adapter<CardTestAdapter.MyViewHolder>{
-    private List<DataModel> dataModelList;
-    private Context mContext;
+    private final List<DataModel> mDataModelList;
+    private final Context mContext;
 
     // View holder class whose objects represent each list item
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView cardImageView;
-        public TextView titleTextView;
-        public TextView subTitleTextView;
+        public ImageView mCardImageView;
+        public TextView mTitleTextView;
+        public TextView mSubTitleTextView;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardImageView = itemView.findViewById(R.id.imageView);
-            titleTextView = itemView.findViewById(R.id.card_title);
-            subTitleTextView = itemView.findViewById(R.id.card_subtitle);
+            mCardImageView = itemView.findViewById(R.id.image_view_image);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
         }
 
         public void bindData(DataModel dataModel, Context context) {
-            cardImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
-            titleTextView.setText(dataModel.getTitle());
-            subTitleTextView.setText(dataModel.getSubTitle());
+            mCardImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
+            mTitleTextView.setText(dataModel.getTitle());
+            mSubTitleTextView.setText(dataModel.getSubTitle());
         }
     }
     public CardTestAdapter(List<DataModel> modelList, Context context) {
-        dataModelList = modelList;
+        mDataModelList = modelList;
         mContext = context;
     }
 
@@ -60,13 +60,13 @@ public class CardTestAdapter extends RecyclerView.Adapter<CardTestAdapter.MyView
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // Bind data for the item at position
 
-        holder.bindData(dataModelList.get(position), mContext);
+        holder.bindData(mDataModelList.get(position), mContext);
     }
 
     @Override
     public int getItemCount() {
         // Return the total number of items
 
-        return dataModelList.size();
+        return mDataModelList.size();
     }
 }

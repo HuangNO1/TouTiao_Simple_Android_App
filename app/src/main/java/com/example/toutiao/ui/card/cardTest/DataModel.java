@@ -5,14 +5,14 @@ import com.example.toutiao.R;
 import java.util.Locale;
 
 public class DataModel {
-    private int imageDrawable;
-    private String title;
-    private String subTitle;
+    private int mImageDrawable;
+    private String mTitle;
+    private String mSubTitle;
 
     public DataModel(int id) {
-        imageDrawable = R.drawable.rem_blog;
-        title = String.format(Locale.ENGLISH, "Title %d Goes Here", id);
-        subTitle = String.format(Locale.ENGLISH, "Sub title %d goes here", id);
+        mImageDrawable = R.drawable.rem_blog;
+        mTitle = String.format(Locale.ENGLISH, "Title %d Goes Here", id);
+        mSubTitle = String.format(Locale.ENGLISH, "Sub title %d goes here", id);
     }
 
     public DataModel() {
@@ -20,14 +20,14 @@ public class DataModel {
     }
 
     public int getImageDrawable() {
-        return imageDrawable;
+        return mImageDrawable;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public String getSubTitle() {
-        return subTitle;
+        return mSubTitle;
     }
 }

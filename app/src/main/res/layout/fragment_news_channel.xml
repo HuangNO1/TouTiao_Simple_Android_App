@@ -40,20 +40,19 @@
 
             <com.scwang.smart.refresh.header.BezierRadarHeader
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingClass" />
+                android:layout_height="wrap_content" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_card_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
                 android:nestedScrollingEnabled="true"
                 android:scrollbars="vertical" />
 
             <com.scwang.smart.refresh.footer.BallPulseFooter
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingClass" />
+                android:layout_height="wrap_content" />
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
     </LinearLayout>
 
