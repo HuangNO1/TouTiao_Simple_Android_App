@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -87,12 +89,12 @@ public class NewsChannelFragment extends Fragment{
     private final List<CardItemDataModel> mCardDataModelList = new ArrayList<>();
     private String mCategory;
     private int mIndex;
-    private boolean mIsRefresh;
-    private boolean mIsLoadMore;
+    private boolean mIsRefresh = false;
+    private boolean mIsLoadMore = false;
+    private boolean mIsLoadingFail = false;
     private int mMaxBehotTime = 0;
     private String mCookie;
-    private JsonObject mResult;
-    private JsonArray mNewsData;
+
     public NewsChannelFragment() {
     }
 
@@ -354,6 +356,22 @@ public class NewsChannelFragment extends Fragment{
         mCardListAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * when loading fail (request body is null), show toast
+     */
+    private void loadingFail() {
+        Toast showFailToast = Toast.makeText(getActivity(), "加载失败", Toast.LENGTH_LONG);
+        showFailToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,0 , 200);
+        showFailToast.show();
+        mLoadingAnimationView.setVisibility(View.GONE);
+        mScreenMaskView.setVisibility(View.GONE);
+        mLoadingMoreButton.setVisibility(View.GONE);
+        mCardListRefreshLayout.finishRefreshing();
+        mIsRefresh = false;
+        mIsLoadMore = false;
+        mIsLoadingFail = false;
+    }
+
     private String getUserAgent() {
         String userAgent = "";
         try {
@@ -380,10 +398,12 @@ public class NewsChannelFragment extends Fragment{
      * @throws JSONException
      */
     public void getInitNews() throws IOException, JSONException {
+        // init data
         mNewsDataModelList.clear();
         mCardDataModelList.clear();
         mLoadingAnimationView.setVisibility(View.VISIBLE);
         mMaxBehotTime = 0;
+        // setting request
         OkHttpClient client = new OkHttpClient();
         Log.v("request url", String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]));
         Request request = new Request.Builder()
@@ -419,10 +439,12 @@ public class NewsChannelFragment extends Fragment{
      * @throws JSONException
      */
     public void refreshNews() throws IOException, JSONException {
+        // init data
         mIsRefresh = true;
         mNewsDataModelList.clear();
         mCardDataModelList.clear();
         mMaxBehotTime = 0;
+        // setting request
         OkHttpClient client = new OkHttpClient();
         Log.v("request url", String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]));
         Request request = new Request.Builder()
@@ -458,8 +480,10 @@ public class NewsChannelFragment extends Fragment{
      * @throws JSONException
      */
     public void loadMoreNews() throws IOException, JSONException {
+        // init data
         mIsLoadMore = true;
         mNewsDataModelList.clear();
+        //setting request
         OkHttpClient client = new OkHttpClient();
         Log.v("request url", String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]));
         Request request = new Request.Builder()
@@ -492,18 +516,25 @@ public class NewsChannelFragment extends Fragment{
      * @param jsonData
      */
     public void dealWithResponseBody(String jsonData) {
+        // avoid that jsonData is null
+        if(jsonData.length() < 1) {
+            mIsLoadingFail = true;
+            // run on main ui thread
+            runThread();
+            return;
+        }
         Log.v("deal with response", "string to JsonObject");
         Log.v("deal with response", "json data\n" + jsonData);
-        mResult = JsonParser.parseString(jsonData).getAsJsonObject();
+        JsonObject result = JsonParser.parseString(jsonData).getAsJsonObject();
         Log.v("deal with response", "result, before max_behot_time " + mMaxBehotTime);
-        Log.v("deal with response", String.valueOf(mResult.getAsJsonObject("next").has("max_behot_time")));
-        mMaxBehotTime = mResult.getAsJsonObject("next").get("max_behot_time").getAsInt();
+        Log.v("deal with response", String.valueOf(result.getAsJsonObject("next").has("max_behot_time")));
+        mMaxBehotTime = result.getAsJsonObject("next").get("max_behot_time").getAsInt();
         Log.v("deal with response", "After max_behot_time : " + mMaxBehotTime + " get news object");
-        mNewsData = mResult.getAsJsonArray("data");
-        for (int i = 0; i < mNewsData.size(); i++) {
+        JsonArray newsData = result.getAsJsonArray("data");
+        for (int i = 0; i < newsData.size(); i++) {
             Log.v("deal with response", "newsObjects " + i);
             try {
-                dealWithNewsObject(mNewsData.get(i).getAsJsonObject());
+                dealWithNewsObject(newsData.get(i).getAsJsonObject());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -521,6 +552,8 @@ public class NewsChannelFragment extends Fragment{
             public void run() {
                 if(mIsLoadMore) {
                     handler.post(() -> loadMoreRenderCardList());
+                } else if(mIsLoadingFail) {
+                    handler.post(() -> loadingFail());
                 } else {
                     handler.post(() -> initRenderCardList());
                 }
