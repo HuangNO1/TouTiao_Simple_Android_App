@@ -1,6 +1,8 @@
 package com.example.toutiao.ui.page.newsChannel;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -26,10 +28,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
+import com.example.toutiao.activity.SearchActivity;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.cardList.CardAdapter;
 import com.example.toutiao.ui.card.cardList.CardItemDataModel;
 import com.example.toutiao.ui.refresh.CircleRefreshLayout;
+import com.example.toutiao.ui.search.SearchView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -59,7 +63,7 @@ import static com.example.toutiao.ui.card.cardList.CardItemDataModel.THREE_IMAGE
  * create an instance of this fragment.
  * 让 fragment 实现 BGARefreshLayoutDelegate 接口
  */
-public class NewsChannelFragment extends Fragment{
+public class NewsChannelFragment extends Fragment {
     private final static String BASE_URL =
             "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
     private static final String[] CATEGORY_ATTR = new String[]{
@@ -127,21 +131,26 @@ public class NewsChannelFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
-        mIsLoadMore = false;
-        mIsRefresh = false;
 
+        // screen mask show when loading
         mScreenMaskView = view.findViewById(R.id.view_screen_mask);
         mScreenMaskView.setVisibility(View.GONE);
 
+        // setting loading animation view
         mLoadingAnimationView = view.findViewById(R.id.animation_view_loading);
+        // animation file
         mLoadingAnimationView.setAnimation("load-animation.json");
+        // speed
         mLoadingAnimationView.setSpeed(1);
         mLoadingAnimationView.playAnimation();
+        // setting loading button
         mLoadingMoreButton = view.findViewById(R.id.button_loading_more);
         mLoadingMoreButton.setVisibility(View.GONE);
+        // scroll to top FAB
         mScrollToTopFab = view.findViewById(R.id.fab_scroll_top);
         mScrollToTopFab.hide();
         mIsScrollToTop = false;
+        // setting FAB onClick event
         mScrollToTopFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -551,10 +560,13 @@ public class NewsChannelFragment extends Fragment{
         new Thread() {
             public void run() {
                 if(mIsLoadMore) {
+                    // load more
                     handler.post(() -> loadMoreRenderCardList());
                 } else if(mIsLoadingFail) {
+                    // fail
                     handler.post(() -> loadingFail());
                 } else {
+                    // init & refresh
                     handler.post(() -> initRenderCardList());
                 }
             }
@@ -569,26 +581,33 @@ public class NewsChannelFragment extends Fragment{
      */
     public void dealWithNewsObject(JsonObject object) throws JSONException {
         NewsDataModel temp;
+        // id
         Log.v("deal with news object", "news_id " + object.get("group_id").getAsString());
         String newsId = object.get("group_id").getAsString();
+        // title
         Log.v("deal with news object", "news_title " + object.get("title").getAsString());
         String newsTitle = object.get("title").getAsString();
+        // abstract
         String newsAbstract = newsTitle;
         Log.v("deal with news object", "news_abstract " + object.has("abstract"));
         if (object.has("abstract")) {
             newsAbstract = object.get("abstract").getAsString();
         }
+        // comments count
         Log.v("deal with news object", "news_comments_count " + object.has("comments_count"));
         int newsCommentsCount = 0;
         if (object.has("comments_count")) {
             newsCommentsCount = object.get("comments_count").getAsInt();
         }
+        // news source
         Log.v("deal with news object", "news_source " + object.get("source").getAsString());
         String newsSource = object.get("source").getAsString();
+        // news media avatar url
         String newsMediaAvatarUrl = DEFAULT_AVATAR;
         if (object.has("media_avatar_url")) {
             newsMediaAvatarUrl = "https:" + object.get("media_avatar_url").getAsString();
         }
+        // news source url
         Log.v("deal with news object", "news_source_url " + object.get("source_url").getAsString());
         String newsSourceUrl = object.get("source_url").getAsString();
 

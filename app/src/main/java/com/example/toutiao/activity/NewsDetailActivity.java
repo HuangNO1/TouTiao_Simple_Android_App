@@ -61,7 +61,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
 
         mBackButton = findViewById(R.id.button_back);
-        backButtonOnClick();
+        setBackButtonOnClick();
 
     }
 
@@ -103,7 +103,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         mNewsDetailWebView.loadUrl(url);
     }
 
-    private void backButtonOnClick() {
+    private void setBackButtonOnClick() {
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,9 +127,9 @@ public class NewsDetailActivity extends AppCompatActivity {
      * back to MainActivity
      */
     public void Leave() {
-        mNewsDetailWebView.clearCache(true);
-        mNewsDetailWebView.clearHistory();
-        mNewsDetailWebView.clearFormData();
+//        mNewsDetailWebView.clearCache(true);
+//        mNewsDetailWebView.clearHistory();
+//        mNewsDetailWebView.clearFormData();
         finish();
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }

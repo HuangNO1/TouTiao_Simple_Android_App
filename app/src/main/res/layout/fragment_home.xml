@@ -10,15 +10,33 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/Theme.Tabbed.AppBarOverlay"
         android:background="@color/tabbed_bg">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways">
+            android:layout_marginEnd="10dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/Theme.Tabbed.PopupOverlay">
+
             <com.example.toutiao.ui.search.SearchView
+                android:id="@+id/search_view_news"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginEnd="30dp" />
+
+            <Button
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right|center_vertical"
+                android:background="@drawable/ic_baseline_add_circle_24"
+                android:backgroundTint="@color/white"
+                android:clickable="true"
+                android:focusable="true"
+                tools:ignore="RtlHardcoded" />
 
         </androidx.appcompat.widget.Toolbar>
         <com.google.android.material.tabs.TabLayout

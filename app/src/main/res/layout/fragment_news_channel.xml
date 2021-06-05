@@ -82,6 +82,7 @@
         android:focusable="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

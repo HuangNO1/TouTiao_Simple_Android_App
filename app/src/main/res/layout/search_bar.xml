@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <LinearLayout
+        android:id="@+id/linearLayout_container"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
         android:layout_marginStart="15dp"
@@ -21,9 +22,12 @@
             android:layout_margin="10dp"
             android:background="@mipmap/search"
             android:textColor="@color/black"
+            android:clickable="true"
+            android:focusable="true"
             tools:ignore="RtlHardcoded" />
         <!-- 输入的搜索信息 -->
         <EditText
+            android:inputType="text"
             android:id="@+id/et_search"
             android:layout_width="0dp"
             android:layout_height="fill_parent"

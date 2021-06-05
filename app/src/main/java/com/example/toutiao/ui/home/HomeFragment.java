@@ -1,5 +1,8 @@
 package com.example.toutiao.ui.home;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,7 +15,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.toutiao.R;
+import com.example.toutiao.activity.SearchActivity;
 import com.example.toutiao.ui.page.newsChannel.SectionsPagerAdapter;
+import com.example.toutiao.ui.search.SearchView;
 import com.google.android.material.tabs.TabLayout;
 
 /**
@@ -21,6 +26,7 @@ import com.google.android.material.tabs.TabLayout;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
+    private SearchView mNewsSearchView;
 
 //    // TODO: Rename parameter arguments, choose names that match
 //    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -71,11 +77,39 @@ public class HomeFragment extends Fragment {
         mWindow.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        // setting tabbed
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(container.getContext(), getChildFragmentManager());
         ViewPager mViewPagerChannel = view.findViewById(R.id.view_pager_channel);
         mViewPagerChannel.setAdapter(sectionsPagerAdapter);
         TabLayout tabsChannel = view.findViewById(R.id.tabs_channel);
         tabsChannel.setupWithViewPager(mViewPagerChannel);
+
+        // search view
+        mNewsSearchView = view.findViewById(R.id.search_view_news);
+//        mNewsSearchView.setContainerClickable(true);
+//        mNewsSearchView.setEditTextClickable(false);
+        mNewsSearchView.setEditTextFocusable(false);
+        // set onClickListener to Search Activity
+//        mNewsSearchView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
+        ((Activity) getActivity()).overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+        mNewsSearchView.mSearchEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = getContext();
+                Activity activity = (Activity) context;
+                Intent intent = new Intent(activity, SearchActivity.class);
+                context.startActivity(intent);
+                activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
+            }
+        });
+
         return view;
     }
 
