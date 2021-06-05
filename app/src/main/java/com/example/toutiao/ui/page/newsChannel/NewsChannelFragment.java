@@ -3,8 +3,6 @@ package com.example.toutiao.ui.page.newsChannel;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,7 +13,6 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,15 +21,14 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
-import com.example.toutiao.activity.MainActivity;
 import com.example.toutiao.models.news.NewsDataModel;
 import com.example.toutiao.ui.card.cardList.CardAdapter;
 import com.example.toutiao.ui.card.cardList.CardItemDataModel;
-import com.google.gson.Gson;
+import com.example.toutiao.ui.refresh.CircleRefreshLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -41,21 +37,15 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.Buffer;
 
 import static com.example.toutiao.ui.card.cardList.CardItemDataModel.NO_IMAGE_TYPE;
 import static com.example.toutiao.ui.card.cardList.CardItemDataModel.ONE_IMAGE_TYPE;
@@ -89,9 +79,11 @@ public class NewsChannelFragment extends Fragment{
     private CardAdapter mCardListAdapter;
     private RecyclerView.LayoutManager mCardListLayoutManager;
     private LottieAnimationView mLoadingAnimationView;
-    private SwipeRefreshLayout mCardListRefreshLayout;
+    private CircleRefreshLayout mCardListRefreshLayout;
     private Button mLoadingMoreButton;
+    private FloatingActionButton mScrollToTopFab;
     private View mScreenMaskView;
+    private Boolean mIsScrollToTop = false;
     private final List<CardItemDataModel> mCardDataModelList = new ArrayList<>();
     private String mCategory;
     private int mIndex;
@@ -145,25 +137,45 @@ public class NewsChannelFragment extends Fragment{
         mLoadingAnimationView.playAnimation();
         mLoadingMoreButton = view.findViewById(R.id.button_loading_more);
         mLoadingMoreButton.setVisibility(View.GONE);
+        mScrollToTopFab = view.findViewById(R.id.fab_scroll_top);
+        mScrollToTopFab.hide();
+        mIsScrollToTop = false;
+        mScrollToTopFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCardListRecyclerView != null) {
+                    mIsScrollToTop = true;
+                    mCardListRecyclerView.smoothScrollToPosition(0);
+                    mScrollToTopFab.hide();
+                    mIsScrollToTop = false;
+                }
+            }
+        });
         // cardList
         mCardListRecyclerView = view.findViewById(R.id.recycler_view_card_list);
         mCardListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
+            public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && !mIsScrollToTop) {
+                    mScrollToTopFab.show();
+                }
+            }
+
+            @Override
             public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (! recyclerView.canScrollVertically(1)){ //1 for down
-//                    if (isInternetConnection()) {
-//                        // 如果网络可用，则异步加载网络数据，并返回 true，显示正在加载更多
-                        try {
-                            loadMoreNews();
-                            mScreenMaskView.setVisibility(View.VISIBLE);
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-//                    } else {
-//                        // 网络不可用
-//                        Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
-//                    }
+                if (!recyclerView.canScrollVertically(1)) { //1 for down
+                    try {
+                        loadMoreNews();
+                        mScreenMaskView.setVisibility(View.VISIBLE);
+                        mLoadingMoreButton.setVisibility(View.VISIBLE);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (dy > 0 || dy < 0 && mScrollToTopFab.isShown()) {
+                    mScrollToTopFab.hide();
                 }
             }
         });
@@ -181,38 +193,27 @@ public class NewsChannelFragment extends Fragment{
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
         mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);
-        mCardListRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mCardListRefreshLayout.setOnRefreshListener(new CircleRefreshLayout.OnCircleRefreshListener() {
             @Override
-            public void onRefresh() {
-//                if (isInternetConnection()) {
-//                    // 如果网络可用，则异步加载网络数据，并返回 true，显示正在加载更多
-                    try {
-                        refreshNews();
-                        mScreenMaskView.setVisibility(View.VISIBLE);
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
-                    }
-//                } else {
-//                    // 网络不可用
-//                    Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
-//                }
+            public void completeRefresh() {
+
+            }
+
+            @Override
+            public void refreshing() throws IOException, JSONException {
+                refreshNews();
+                mScreenMaskView.setVisibility(View.VISIBLE);
             }
         });
 
         TextView mSectionLabelTextView = view.findViewById(R.id.text_view_section_label);
 
-//        if (isInternetConnection()) {
-            // 如果网络可用，则异步加载网络数据，并返回 true，显示正在加载更多
             try {
                 // init
                 getInitNews();
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
-//        } else {
-//            // 网络不可用
-//            Toast.makeText(getContext(), "网络不可用", Toast.LENGTH_SHORT).show();
-//        }
 
         mPageViewModel.getCategory().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -279,8 +280,7 @@ public class NewsChannelFragment extends Fragment{
         }
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
-        mLoadingMoreButton.setVisibility(View.VISIBLE);
-        mCardListRefreshLayout.setRefreshing(false);
+        mCardListRefreshLayout.finishRefreshing();
         mCardListAdapter = new CardAdapter(mCardDataModelList, getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
@@ -347,6 +347,7 @@ public class NewsChannelFragment extends Fragment{
         }
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
+        mLoadingMoreButton.setVisibility(View.GONE);
         mCardListAdapter.setDataModelList(tempCardDataModelList);
         Log.v("after load more", "card list size: " + mCardListAdapter.getItemCount());
         mIsLoadMore = false;
