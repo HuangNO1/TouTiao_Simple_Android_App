@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_news_channel"
@@ -59,32 +59,29 @@
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginBottom="70dp"
+        android:layout_gravity="bottom|center"
         android:clickable="false"
         android:text="@string/loading_more"
         android:background="@color/red_200"
         android:textColor="#FFFFFF"
         android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         tools:ignore="SmallSp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_scroll_top"
+        android:id="@+id/fab_publish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="70dp"
-        android:contentDescription="@string/scrolltotop"
-        android:isScrollContainer="false"
-        android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+        android:backgroundTint="@color/red_200"
         android:clickable="true"
+        android:contentDescription="@string/addnew"
         android:focusable="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:isScrollContainer="false"
+        android:src="@drawable/ic_baseline_add_24"
         android:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:borderWidth="0dp" />
 
     <View
         android:id="@+id/view_screen_mask"
@@ -98,4 +95,4 @@
         android:focusable="true"
         android:contentDescription="@string/image_url" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

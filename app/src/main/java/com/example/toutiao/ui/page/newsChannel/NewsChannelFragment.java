@@ -87,7 +87,7 @@ public class NewsChannelFragment extends Fragment {
     private LottieAnimationView mLoadingAnimationView;
     private CircleRefreshLayout mCardListRefreshLayout;
     private Button mLoadingMoreButton;
-    private FloatingActionButton mScrollToTopFab;
+    private FloatingActionButton mPublishFab;
     private View mScreenMaskView;
     private Boolean mIsScrollToTop = false;
     private final List<CardItemDataModel> mCardDataModelList = new ArrayList<>();
@@ -146,19 +146,16 @@ public class NewsChannelFragment extends Fragment {
         // setting loading button
         mLoadingMoreButton = view.findViewById(R.id.button_loading_more);
         mLoadingMoreButton.setVisibility(View.GONE);
-        // scroll to top FAB
-        mScrollToTopFab = view.findViewById(R.id.fab_scroll_top);
-        mScrollToTopFab.hide();
+        // Publish FAB
+        mPublishFab = view.findViewById(R.id.fab_publish);
+        mPublishFab.hide();
         mIsScrollToTop = false;
         // setting FAB onClick event
-        mScrollToTopFab.setOnClickListener(new View.OnClickListener() {
+        mPublishFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCardListRecyclerView != null) {
-                    mIsScrollToTop = true;
-                    mCardListRecyclerView.smoothScrollToPosition(0);
-                    mScrollToTopFab.hide();
-                    mIsScrollToTop = false;
+                    // TODO: define some events
                 }
             }
         });
@@ -168,9 +165,6 @@ public class NewsChannelFragment extends Fragment {
             @Override
             public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && !mIsScrollToTop) {
-                    mScrollToTopFab.show();
-                }
             }
 
             @Override
@@ -185,8 +179,11 @@ public class NewsChannelFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                if (dy > 0 || dy < 0 && mScrollToTopFab.isShown()) {
-                    mScrollToTopFab.hide();
+                if (dy < 0) {
+                    mPublishFab.hide();
+                }
+                else if (dy > 0) {
+                    mPublishFab.show();
                 }
             }
         });

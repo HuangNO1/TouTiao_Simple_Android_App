@@ -1,6 +1,7 @@
 package com.example.toutiao.activity;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -12,10 +13,13 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * A Activity to be showed news detail.
@@ -27,7 +31,10 @@ public class NewsDetailActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Button mBackButton;
     private LottieAnimationView mLoadingAnimationView;
+    private FloatingActionButton mScrollToTopFAB;
+    private NestedScrollView mWebNestedScrollView;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,28 @@ public class NewsDetailActivity extends AppCompatActivity {
         mBackButton = findViewById(R.id.button_back);
         setBackButtonOnClick();
 
+        mWebNestedScrollView = findViewById(R.id.nested_scroll_view_web);
+        mWebNestedScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == 0) {
+                    // hide FAB when NestedScrollView is at the top
+                    mScrollToTopFAB.hide();
+                } else {
+                    mScrollToTopFAB.show();
+                }
+            }
+        });
+
+        mScrollToTopFAB = findViewById(R.id.fab_scroll_to_top);
+        mScrollToTopFAB.hide();
+        mScrollToTopFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // scroll to top
+                mWebNestedScrollView.smoothScrollTo(0, 0);
+            }
+        });
     }
 
     @SuppressLint("SetJavaScriptEnabled")
