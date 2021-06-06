@@ -60,7 +60,8 @@ public class NewsDetailActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar_loading);
         mProgressBar.setMax(100);
         mProgressBar.setProgress(1);
-        if (url.substring(0, 3) == "http") {
+        // avoid the url has "http"
+        if (url.contains("http")) {
             setNewsDetailWebView(url);
         } else {
             setNewsDetailWebView("https://m.toutiao.com" + url);

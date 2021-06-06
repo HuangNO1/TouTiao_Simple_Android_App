@@ -75,7 +75,9 @@ public class NewsChannelFragment extends Fragment {
     };
     private final static String DEFAULT_AVATAR =
             "https://img.88icon.com/download/jpg/20200901/84083236c883964781afea41f1ea4e9c_512_511.jpg!88bg";
-    ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
+    private final static String DEFAULT_IMAGE =
+            "https://www.asiapacdigital.com/Zh_Cht/img/ap/services/reseller/TouTiao_1.jpg";
+    private ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
     private PageViewModel mPageViewModel;
     private RecyclerView mCardListRecyclerView;
     private NewsCardAdapter mCardListAdapter;
@@ -610,8 +612,24 @@ public class NewsChannelFragment extends Fragment {
         if (object.has("image_list")) {
             JsonArray imageList = object.get("image_list").getAsJsonArray();
             ArrayList<String> newsThreeImage = new ArrayList<>();
-            for (int i = 0; i < imageList.size(); i++) {
-                newsThreeImage.add("https:" + imageList.get(i).getAsJsonObject().get("url").getAsString());
+
+            // the Json Array is not null
+            if(imageList.size() < 3) {
+                for (int i = 0; i < 3; i++) {
+                    // avoid url is null
+                    newsThreeImage.add(DEFAULT_IMAGE);
+                }
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    // avoid url is null
+                    String url = imageList.get(i).getAsJsonObject().get("url").getAsString();
+                    if(url.length() == 0) {
+                        url = DEFAULT_IMAGE;
+                    } else {
+                        url = "https:" + url;
+                    }
+                    newsThreeImage.add(url);
+                }
             }
             temp = new NewsDataModel(
                     NewsDataModel.THREE_IMAGE_TYPE,
