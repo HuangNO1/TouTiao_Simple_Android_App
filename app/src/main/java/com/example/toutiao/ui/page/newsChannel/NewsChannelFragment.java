@@ -1,8 +1,6 @@
 package com.example.toutiao.ui.page.newsChannel;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -28,12 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
-import com.example.toutiao.activity.SearchActivity;
 import com.example.toutiao.models.news.NewsDataModel;
-import com.example.toutiao.ui.card.cardList.CardAdapter;
-import com.example.toutiao.ui.card.cardList.CardItemDataModel;
+import com.example.toutiao.ui.card.newsCardList.NewsCardAdapter;
+import com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel;
 import com.example.toutiao.ui.refresh.CircleRefreshLayout;
-import com.example.toutiao.ui.search.SearchView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -53,9 +49,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.example.toutiao.ui.card.cardList.CardItemDataModel.NO_IMAGE_TYPE;
-import static com.example.toutiao.ui.card.cardList.CardItemDataModel.ONE_IMAGE_TYPE;
-import static com.example.toutiao.ui.card.cardList.CardItemDataModel.THREE_IMAGE_TYPE;
+import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.NO_IMAGE_TYPE;
+import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.ONE_IMAGE_TYPE;
+import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.THREE_IMAGE_TYPE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +78,7 @@ public class NewsChannelFragment extends Fragment {
     ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
     private PageViewModel mPageViewModel;
     private RecyclerView mCardListRecyclerView;
-    private CardAdapter mCardListAdapter;
+    private NewsCardAdapter mCardListAdapter;
     private RecyclerView.LayoutManager mCardListLayoutManager;
     private LottieAnimationView mLoadingAnimationView;
     private CircleRefreshLayout mCardListRefreshLayout;
@@ -90,7 +86,7 @@ public class NewsChannelFragment extends Fragment {
     private FloatingActionButton mPublishFab;
     private View mScreenMaskView;
     private Boolean mIsScrollToTop = false;
-    private final List<CardItemDataModel> mCardDataModelList = new ArrayList<>();
+    private final List<NewsCardItemDataModel> mCardDataModelList = new ArrayList<>();
     private String mCategory;
     private int mIndex;
     private boolean mIsRefresh = false;
@@ -197,7 +193,7 @@ public class NewsChannelFragment extends Fragment {
         mCardListRecyclerView.setLayoutManager(mCardListLayoutManager);
 
         // specify an adapter and pass in our data model list
-        mCardListAdapter = new CardAdapter(mCardDataModelList, container.getContext());
+        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, container.getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
         mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);
@@ -247,7 +243,7 @@ public class NewsChannelFragment extends Fragment {
             String newsSourceUrl = mNewsDataModelList.get(i).getNewsSourceUrl();
 
             if (type == NO_IMAGE_TYPE) {
-                mCardDataModelList.add(new CardItemDataModel(
+                mCardDataModelList.add(new NewsCardItemDataModel(
                         NO_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -259,7 +255,7 @@ public class NewsChannelFragment extends Fragment {
                 ));
             } else if (type == ONE_IMAGE_TYPE) {
                 String middleImage = mNewsDataModelList.get(i).getNewsImageUrl();
-                mCardDataModelList.add(new CardItemDataModel(
+                mCardDataModelList.add(new NewsCardItemDataModel(
                         ONE_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -273,7 +269,7 @@ public class NewsChannelFragment extends Fragment {
 
             } else if (type == THREE_IMAGE_TYPE) {
                 ArrayList<String> newsThreeImage = mNewsDataModelList.get(i).getNewsThreeImage();
-                mCardDataModelList.add(new CardItemDataModel(
+                mCardDataModelList.add(new NewsCardItemDataModel(
                         THREE_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -289,7 +285,7 @@ public class NewsChannelFragment extends Fragment {
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
         mCardListRefreshLayout.finishRefreshing();
-        mCardListAdapter = new CardAdapter(mCardDataModelList, getContext());
+        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
         mIsRefresh = false;
@@ -301,7 +297,7 @@ public class NewsChannelFragment extends Fragment {
     private void loadMoreRenderCardList() {
         Log.v("start more render", "render more card, news list size: " + mNewsDataModelList.size());
 
-        List<CardItemDataModel> tempCardDataModelList = new ArrayList<>();
+        List<NewsCardItemDataModel> tempCardDataModelList = new ArrayList<>();
 
         for (int i = 0; i < mNewsDataModelList.size(); i++) {
             int type = mNewsDataModelList.get(i).getNewsCardStyleType();
@@ -314,7 +310,7 @@ public class NewsChannelFragment extends Fragment {
             String newsSourceUrl = mNewsDataModelList.get(i).getNewsSourceUrl();
 
             if (type == NO_IMAGE_TYPE) {
-                tempCardDataModelList.add(new CardItemDataModel(
+                tempCardDataModelList.add(new NewsCardItemDataModel(
                         NO_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -326,7 +322,7 @@ public class NewsChannelFragment extends Fragment {
                 ));
             } else if (type == ONE_IMAGE_TYPE) {
                 String middleImage = mNewsDataModelList.get(i).getNewsImageUrl();
-                tempCardDataModelList.add(new CardItemDataModel(
+                tempCardDataModelList.add(new NewsCardItemDataModel(
                         ONE_IMAGE_TYPE,
                         newsId,
                         newsTitle,
@@ -340,7 +336,7 @@ public class NewsChannelFragment extends Fragment {
 
             } else if (type == THREE_IMAGE_TYPE) {
                 ArrayList<String> newsThreeImage = mNewsDataModelList.get(i).getNewsThreeImage();
-                tempCardDataModelList.add(new CardItemDataModel(
+                tempCardDataModelList.add(new NewsCardItemDataModel(
                         THREE_IMAGE_TYPE,
                         newsId,
                         newsTitle,

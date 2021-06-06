@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.card.cardList;
+package com.example.toutiao.ui.card.newsCardList;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -7,7 +7,7 @@ import java.util.Locale;
  * CardItemDataModel class: the card item data model in New Channel Fragment
  */
 
-public class CardItemDataModel {
+public class NewsCardItemDataModel {
     public static final int NO_IMAGE_TYPE = 0;
     public static final int ONE_IMAGE_TYPE = 1;
     public static final int THREE_IMAGE_TYPE = 2;
@@ -23,14 +23,14 @@ public class CardItemDataModel {
     private String mDetailUrl; // detail text to jump
 
     // no image style constructor
-    public CardItemDataModel(int itemType,
-                             String id,
-                             String newsTitle,
-                             String newsAbstract,
-                             int newsCommentsCount,
-                             String newsSource,
-                             String newsMediaAvatarUrl,
-                             String newsSourceUrl
+    public NewsCardItemDataModel(int itemType,
+                                 String id,
+                                 String newsTitle,
+                                 String newsAbstract,
+                                 int newsCommentsCount,
+                                 String newsSource,
+                                 String newsMediaAvatarUrl,
+                                 String newsSourceUrl
     ) {
         mItemType = itemType;
         mId = id;
@@ -42,15 +42,15 @@ public class CardItemDataModel {
     }
 
     // one image style constructor
-    public CardItemDataModel(int itemType,
-                             String id,
-                             String newsTitle,
-                             String newsAbstract,
-                             int newsCommentsCount,
-                             String newsSource,
-                             String newsMediaAvatarUrl,
-                             String newsSourceUrl,
-                             String imageDrawable
+    public NewsCardItemDataModel(int itemType,
+                                 String id,
+                                 String newsTitle,
+                                 String newsAbstract,
+                                 int newsCommentsCount,
+                                 String newsSource,
+                                 String newsMediaAvatarUrl,
+                                 String newsSourceUrl,
+                                 String imageDrawable
     ) {
         mItemType = itemType;
         mId = id;
@@ -64,15 +64,15 @@ public class CardItemDataModel {
     }
 
     // three image style constructor
-    public CardItemDataModel(int itemType,
-                             String id,
-                             String newsTitle,
-                             String newsAbstract,
-                             int newsCommentsCount,
-                             String newsSource,
-                             String newsMediaAvatarUrl,
-                             String newsSourceUrl,
-                             ArrayList<String> threeImageDrawable
+    public NewsCardItemDataModel(int itemType,
+                                 String id,
+                                 String newsTitle,
+                                 String newsAbstract,
+                                 int newsCommentsCount,
+                                 String newsSource,
+                                 String newsMediaAvatarUrl,
+                                 String newsSourceUrl,
+                                 ArrayList<String> threeImageDrawable
     ) {
         mItemType = itemType;
         mId = id;

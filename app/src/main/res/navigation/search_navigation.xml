@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_navigation"
+    app:startDestination="@id/searchHotEventFragment">
+
+    <fragment
+        android:id="@+id/searchHotEventFragment"
+        android:name="com.example.toutiao.ui.page.searchHotEvent.SearchHotEventFragment"
+        android:label="fragment_search_hot_event"
+        tools:layout="@layout/fragment_search_hot_event" />
+</navigation>

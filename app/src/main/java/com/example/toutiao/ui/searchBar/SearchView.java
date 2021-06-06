@@ -1,4 +1,4 @@
-package com.example.toutiao.ui.search;
+package com.example.toutiao.ui.searchBar;
 
 import android.content.Context;
 import android.text.Editable;

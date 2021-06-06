@@ -9,7 +9,7 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.Tabbed.PopupOverlay"
+        android:theme="@style/Theme.PopupOverlay"
         android:background="@color/tabbed_bg">
 
         <androidx.appcompat.widget.Toolbar
@@ -18,7 +18,7 @@
             android:layout_marginEnd="10dp"
             app:layout_scrollFlags="scroll|enterAlways">
 
-            <com.example.toutiao.ui.search.SearchView
+            <com.example.toutiao.ui.searchBar.SearchView
                 android:id="@+id/search_view_news"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

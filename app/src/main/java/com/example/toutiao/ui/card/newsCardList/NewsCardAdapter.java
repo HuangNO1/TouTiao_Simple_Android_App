@@ -1,9 +1,8 @@
-package com.example.toutiao.ui.card.cardList;
+package com.example.toutiao.ui.card.newsCardList;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.toutiao.R;
 import com.example.toutiao.activity.NewsDetailActivity;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,8 +23,8 @@ import java.util.List;
  * A card adapter to help perform to control card item's render in news channel fragment
  */
 
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final List<CardItemDataModel> mDataModelList;
+public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final List<NewsCardItemDataModel> mDataModelList;
     private final Context mContext;
 
     // No image style card view holder
@@ -48,7 +46,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             onClickListener(itemView);
         }
 
-        public void bindData(CardItemDataModel dataModel, Context context) {
+        public void bindData(NewsCardItemDataModel dataModel, Context context) {
             Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
             // deal with title's length and subtitle's length
             String title = dataModel.getTitle();
@@ -89,7 +87,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             onClickListener(itemView);
         }
 
-        public void bindData(CardItemDataModel dataModel, Context context) {
+        public void bindData(NewsCardItemDataModel dataModel, Context context) {
             Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
             Picasso.get().load(dataModel.getImageDrawable()).into(mCardImageView);
             String title = dataModel.getTitle();
@@ -135,7 +133,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             onClickListener(itemView);
         }
 
-        public void bindData(CardItemDataModel dataModel, Context context) {
+        public void bindData(NewsCardItemDataModel dataModel, Context context) {
             Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
             ArrayList<String> images = dataModel.getThreeImageDrawable();
             Picasso.get().load(images.get(0)).into(mCardImageView1);
@@ -180,18 +178,18 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(final int position) {
         switch(mDataModelList.get(position).getItemType()) {
-            case CardItemDataModel.NO_IMAGE_TYPE:
-                return CardItemDataModel.NO_IMAGE_TYPE;
-            case CardItemDataModel.ONE_IMAGE_TYPE:
-                return CardItemDataModel.ONE_IMAGE_TYPE;
-            case CardItemDataModel.THREE_IMAGE_TYPE:
-                return CardItemDataModel.THREE_IMAGE_TYPE;
+            case NewsCardItemDataModel.NO_IMAGE_TYPE:
+                return NewsCardItemDataModel.NO_IMAGE_TYPE;
+            case NewsCardItemDataModel.ONE_IMAGE_TYPE:
+                return NewsCardItemDataModel.ONE_IMAGE_TYPE;
+            case NewsCardItemDataModel.THREE_IMAGE_TYPE:
+                return NewsCardItemDataModel.THREE_IMAGE_TYPE;
             default:
                 return -1;
         }
     }
 
-    public CardAdapter(List<CardItemDataModel> modelList, Context context) {
+    public NewsCardAdapter(List<NewsCardItemDataModel> modelList, Context context) {
         mDataModelList = modelList;
         mContext = context;
     }
@@ -200,7 +198,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * load more news and add to mDataModelList
      * @param modelList
      */
-    public void setDataModelList(List<CardItemDataModel> modelList) {
+    public void setDataModelList(List<NewsCardItemDataModel> modelList) {
         mDataModelList.addAll(modelList);
     }
 
@@ -214,15 +212,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
-            case CardItemDataModel.NO_IMAGE_TYPE:
+            case NewsCardItemDataModel.NO_IMAGE_TYPE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.no_image_card_item, parent, false);
                 return new NoImageCardViewHolder(view);
-            case CardItemDataModel.ONE_IMAGE_TYPE:
+            case NewsCardItemDataModel.ONE_IMAGE_TYPE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.one_image_card_item, parent, false);
                 return new OneImageCardViewHolder(view);
-            case CardItemDataModel.THREE_IMAGE_TYPE:
+            case NewsCardItemDataModel.THREE_IMAGE_TYPE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.three_images_card_item, parent, false);
                 return new ThreeImageCardViewHolder(view);
@@ -233,20 +231,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NotNull final RecyclerView.ViewHolder holder, final int position) {
-        CardItemDataModel object = mDataModelList.get(position);
+        NewsCardItemDataModel object = mDataModelList.get(position);
 
         if(object != null) {
             switch (object.getItemType()) {
-                case CardItemDataModel.NO_IMAGE_TYPE:
+                case NewsCardItemDataModel.NO_IMAGE_TYPE:
                     NoImageCardViewHolder holder1 = (NoImageCardViewHolder)holder;
                     holder1.bindData(object, mContext);
                     break;
 
-                case CardItemDataModel.ONE_IMAGE_TYPE:
+                case NewsCardItemDataModel.ONE_IMAGE_TYPE:
                     OneImageCardViewHolder holder2 = (OneImageCardViewHolder)holder;
                     holder2.bindData(object, mContext);
                     break;
-                case CardItemDataModel.THREE_IMAGE_TYPE:
+                case NewsCardItemDataModel.THREE_IMAGE_TYPE:
                     ThreeImageCardViewHolder holder3 = (ThreeImageCardViewHolder)holder;
                     holder3.bindData(object, mContext);
                     break;
