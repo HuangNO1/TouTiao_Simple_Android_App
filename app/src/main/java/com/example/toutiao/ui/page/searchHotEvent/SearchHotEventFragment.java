@@ -1,11 +1,6 @@
 package com.example.toutiao.ui.page.searchHotEvent;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -14,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.toutiao.R;
 import com.example.toutiao.models.search.SearchHotEventDataModel;
@@ -48,8 +47,8 @@ public class SearchHotEventFragment extends Fragment {
     private RecyclerView mCardListRecyclerView;
     private SearchHotCardAdapter mCardListAdapter;
     private RecyclerView.LayoutManager mCardListLayoutManager;
-    private ArrayList<SearchHotEventDataModel> mNewsDataModelList = new ArrayList<>();
-    private List<SearchHotCardItemDataModel> mCardDataModelList = new ArrayList<>();
+    private final ArrayList<SearchHotEventDataModel> mNewsDataModelList = new ArrayList<>();
+    private final List<SearchHotCardItemDataModel> mCardDataModelList = new ArrayList<>();
     private Boolean mIsLoadingFail = false;
 
     public SearchHotEventFragment() {
@@ -140,9 +139,10 @@ public class SearchHotEventFragment extends Fragment {
             }
         });
     }
+
     public void dealWithResponseBody(String jsonData) {
         // avoid that jsonData is null
-        if(jsonData.length() < 1) {
+        if (jsonData.length() < 1) {
             mIsLoadingFail = true;
             // run on main ui thread
             runThread();
@@ -191,7 +191,7 @@ public class SearchHotEventFragment extends Fragment {
 
         new Thread() {
             public void run() {
-                if(mIsLoadingFail) {
+                if (mIsLoadingFail) {
                     // fail
                     handler.post(() -> loadingFail());
                 } else {
@@ -223,7 +223,7 @@ public class SearchHotEventFragment extends Fragment {
      */
     private void loadingFail() {
         Toast showFailToast = Toast.makeText(getActivity(), "加载头条热榜失败", Toast.LENGTH_LONG);
-        showFailToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL,0 , 200);
+        showFailToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 200);
         showFailToast.show();
         mIsLoadingFail = false;
     }

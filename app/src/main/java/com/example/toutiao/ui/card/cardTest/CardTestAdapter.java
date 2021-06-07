@@ -15,30 +15,12 @@ import com.example.toutiao.R;
 
 import java.util.List;
 
-public class CardTestAdapter extends RecyclerView.Adapter<CardTestAdapter.MyViewHolder>{
+public class CardTestAdapter extends RecyclerView.Adapter<CardTestAdapter.MyViewHolder> {
     private final List<DataModel> mDataModelList;
     private final Context mContext;
 
     // View holder class whose objects represent each list item
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageView mCardImageView;
-        public TextView mTitleTextView;
-        public TextView mSubTitleTextView;
-
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mCardImageView = itemView.findViewById(R.id.image_view_image);
-            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
-            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
-        }
-
-        public void bindData(DataModel dataModel, Context context) {
-            mCardImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
-            mTitleTextView.setText(dataModel.getTitle());
-            mSubTitleTextView.setText(dataModel.getSubTitle());
-        }
-    }
     public CardTestAdapter(List<DataModel> modelList, Context context) {
         mDataModelList = modelList;
         mContext = context;
@@ -68,5 +50,24 @@ public class CardTestAdapter extends RecyclerView.Adapter<CardTestAdapter.MyView
         // Return the total number of items
 
         return mDataModelList.size();
+    }
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+        public ImageView mCardImageView;
+        public TextView mTitleTextView;
+        public TextView mSubTitleTextView;
+
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mCardImageView = itemView.findViewById(R.id.image_view_image);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
+        }
+
+        public void bindData(DataModel dataModel, Context context) {
+            mCardImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.rem_blog));
+            mTitleTextView.setText(dataModel.getTitle());
+            mSubTitleTextView.setText(dataModel.getSubTitle());
+        }
     }
 }

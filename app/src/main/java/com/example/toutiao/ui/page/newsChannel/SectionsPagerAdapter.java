@@ -1,61 +1,43 @@
 package com.example.toutiao.ui.page.newsChannel;
 
-import android.content.Context;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-
-import com.example.toutiao.R;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class SectionsPagerAdapter extends FragmentStateAdapter {
 
-    @StringRes
-    private static final int[] TAB_TITLES = new int[] {
-        R.string.title__all__,
-        R.string.title_news_tech,
-//        R.string.title_news_image,
-        R.string.title_news_hot,
-        R.string.title_news_entertainment,
-        R.string.title_news_game,
-        R.string.title_news_sports,
-        R.string.title_news_finance,
-        R.string.title_digital,
-    };
-    private final Context mContext;
+    private final ArrayList<Fragment> mArrayList = new ArrayList<>();
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
-        super(fm);
-        mContext = context;
+    public SectionsPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+        super(fragmentManager, lifecycle);
     }
 
+    public void addFragment(Fragment fragment) {
+        mArrayList.add(fragment);
+    }
+
+    @NonNull
     @NotNull
     @Override
-    public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        String category = mContext.getString(TAB_TITLES[position]);
-        return NewsChannelFragment.newInstance(category, position);
-    }
-
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
+    public Fragment createFragment(int position) {
+        // return your fragment that corresponds to this 'position'
+        return mArrayList.get(position);
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         // Show total pages.
-        return TAB_TITLES.length;
+        return mArrayList.size();
     }
 }
 

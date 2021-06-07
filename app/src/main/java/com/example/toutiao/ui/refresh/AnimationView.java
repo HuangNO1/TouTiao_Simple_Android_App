@@ -18,63 +18,45 @@ import android.view.ViewGroup;
 public class AnimationView extends View {
 
     private static final String TAG = "AnimationView";
-
+    private static final long POP_BALL_DUR = 300;
+    private static final long OUTER_DUR = 200;
+    private static final long DONE_DUR = 1000;
+    private static final long REL_DRAG_DUR = 200;
+    private static final long SPRING_DUR = 200;
     private int PULL_HEIGHT;
     private int PULL_DELTA;
     private float mWidthOffset;
-
-
-
     private AnimatorStatus mAniStatus = AnimatorStatus.PULL_DOWN;
-
-    enum AnimatorStatus {
-        PULL_DOWN,
-        DRAG_DOWN,
-        REL_DRAG,
-        SPRING_UP, // rebound to up, the position is less than PULL_HEIGHT
-        POP_BALL,
-        OUTER_CIR,
-        REFRESHING,
-        DONE,
-        STOP;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case PULL_DOWN:
-                    return "pull down";
-                case DRAG_DOWN:
-                    return "drag down";
-                case REL_DRAG:
-                    return "release drag";
-                case SPRING_UP:
-                    return "spring up";
-                case POP_BALL:
-                    return "pop ball";
-                case OUTER_CIR:
-                    return "outer circle";
-                case REFRESHING:
-                    return "refreshing...";
-                case DONE:
-                    return "done!";
-                case STOP:
-                    return "stop";
-                default:
-                    return "unknown state";
-            }
-        }
-    }
-
-
     private Paint mBackPaint;
     private Paint mBallPaint;
     private Paint mOutPaint;
     private Path mPath;
-
+    private int mRadius;
+    private int mWidth;
+    private int mHeight;
+    private int mRefreshStart = 90;
+    private int mRefreshStop = 90;
+    private int TARGET_DEGREE = 270;
+    private boolean mIsStart = true;
+    private boolean mIsRefreshing = true;
+    private int mLastHeight;
+    private long mStart;
+    private long mStop;
+    private int mSpriDeta;
+    private long mSprStart;
+    private long mSprStop;
+    private long mPopStart;
+    private long mPopStop;
+    private long mOutStart;
+    private long mOutStop;
+    private long mDoneStart;
+    private long mDoneStop;
+    private OnViewAniDone onViewAniDone;
 
     public AnimationView(Context context) {
         this(context, null, 0);
     }
+
 
     public AnimationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -110,10 +92,6 @@ public class AnimationView extends View {
         mPath = new Path();
 
     }
-
-    private int mRadius;
-    private int mWidth;
-    private int mHeight;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -290,12 +268,6 @@ public class AnimationView extends View {
         canvas.drawCircle(mWidth / 2, innerY, mRadius, mBallPaint);
     }
 
-    private int mRefreshStart = 90;
-    private int mRefreshStop = 90;
-    private int TARGET_DEGREE = 270;
-    private boolean mIsStart = true;
-    private boolean mIsRefreshing = true;
-
     private void drawRefreshing(Canvas canvas) {
         canvas.drawRect(0, 0, mWidth, mHeight, mBackPaint);
         int innerY = PULL_HEIGHT - PULL_DELTA / 2 - mRadius * 2;
@@ -371,8 +343,6 @@ public class AnimationView extends View {
 
     }
 
-    private int mLastHeight;
-
     private int getRelHeight() {
         return (int) (mSpriDeta * (1 - getRelRatio()));
     }
@@ -380,13 +350,6 @@ public class AnimationView extends View {
     private int getSpringDelta() {
         return (int) (PULL_DELTA * getSprRatio());
     }
-
-
-    private static long REL_DRAG_DUR = 200;
-
-    private long mStart;
-    private long mStop;
-    private int mSpriDeta;
 
     public void releaseDrag() {
         mStart = System.currentTimeMillis();
@@ -405,18 +368,12 @@ public class AnimationView extends View {
         return Math.min(ratio, 1);
     }
 
-    private static long SPRING_DUR = 200;
-    private long mSprStart;
-    private long mSprStop;
-
-
     private void springUp() {
         mSprStart = System.currentTimeMillis();
         mSprStop = mSprStart + SPRING_DUR;
         mAniStatus = AnimatorStatus.SPRING_UP;
         invalidate();
     }
-
 
     private float getSprRatio() {
         if (System.currentTimeMillis() >= mSprStop) {
@@ -426,10 +383,6 @@ public class AnimationView extends View {
         float ratio = (System.currentTimeMillis() - mSprStart) / (float) SPRING_DUR;
         return Math.min(1, ratio);
     }
-
-    private static final long POP_BALL_DUR = 300;
-    private long mPopStart;
-    private long mPopStop;
 
     private void popBall() {
         mPopStart = System.currentTimeMillis();
@@ -447,10 +400,6 @@ public class AnimationView extends View {
         float ratio = (System.currentTimeMillis() - mPopStart) / (float) POP_BALL_DUR;
         return Math.min(ratio, 1);
     }
-
-    private static final long OUTER_DUR = 200;
-    private long mOutStart;
-    private long mOutStop;
 
     private void startOutCir() {
         mOutStart = System.currentTimeMillis();
@@ -474,10 +423,6 @@ public class AnimationView extends View {
         return Math.min(ratio, 1);
     }
 
-    private static final long DONE_DUR = 1000;
-    private long mDoneStart;
-    private long mDoneStop;
-
     private void applyDone() {
         mDoneStart = System.currentTimeMillis();
         mDoneStop = mDoneStart + DONE_DUR;
@@ -497,17 +442,9 @@ public class AnimationView extends View {
         return Math.min(ratio, 1);
     }
 
-
-    private OnViewAniDone onViewAniDone;
-
     public void setOnViewAniDone(OnViewAniDone onViewAniDone) {
         this.onViewAniDone = onViewAniDone;
     }
-
-    interface OnViewAniDone {
-        void viewAniDone();
-    }
-
 
     public void setAniBackColor(int color) {
         mBackPaint.setColor(color);
@@ -522,6 +459,48 @@ public class AnimationView extends View {
     // the height of view is smallTimes times of circle radius
     public void setRadius(int smallTimes) {
         mRadius = mHeight / smallTimes;
+    }
+
+    enum AnimatorStatus {
+        PULL_DOWN,
+        DRAG_DOWN,
+        REL_DRAG,
+        SPRING_UP, // rebound to up, the position is less than PULL_HEIGHT
+        POP_BALL,
+        OUTER_CIR,
+        REFRESHING,
+        DONE,
+        STOP;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case PULL_DOWN:
+                    return "pull down";
+                case DRAG_DOWN:
+                    return "drag down";
+                case REL_DRAG:
+                    return "release drag";
+                case SPRING_UP:
+                    return "spring up";
+                case POP_BALL:
+                    return "pop ball";
+                case OUTER_CIR:
+                    return "outer circle";
+                case REFRESHING:
+                    return "refreshing...";
+                case DONE:
+                    return "done!";
+                case STOP:
+                    return "stop";
+                default:
+                    return "unknown state";
+            }
+        }
+    }
+
+    interface OnViewAniDone {
+        void viewAniDone();
     }
 
 

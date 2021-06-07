@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/navigation_video"
         android:name="com.example.toutiao.ui.video.VideoFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_video"
         tools:layout="@layout/fragment_video" />
 
     <fragment

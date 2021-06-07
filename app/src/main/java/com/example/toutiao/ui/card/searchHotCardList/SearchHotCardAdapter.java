@@ -21,35 +21,17 @@ import java.util.List;
 
 public class SearchHotCardAdapter extends RecyclerView.Adapter<SearchHotCardAdapter.SearchHotCardHolder> {
 
-    private List<SearchHotCardItemDataModel> mDataModelList;
-    private Context mContext;
+    private final List<SearchHotCardItemDataModel> mDataModelList;
+    private final Context mContext;
 
-    // View holder class whose objects represent each list item
-    public class SearchHotCardHolder extends RecyclerView.ViewHolder {
-        private TextView mKeyTextView;
-        private TextView mTitleTextView;
-        private TextView mSourceUrlTextView;
-
-        public SearchHotCardHolder(@NonNull @NotNull View itemView) {
-            super(itemView);
-            mKeyTextView = itemView.findViewById(R.id.text_view_key);
-            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
-            mSourceUrlTextView = itemView.findViewById(R.id.text_view_source_url);
-
-            onClickListener(itemView);
-        }
-
-        @SuppressLint({"SetTextI18n"})
-        public void bindData(SearchHotCardItemDataModel dataModel, Context context) {
-            int key = dataModel.getKey();
-            mKeyTextView.setText(Integer.toString(key));
-            mTitleTextView.setText(dataModel.getTitle());
-            mSourceUrlTextView.setText(dataModel.getDetailUrl());
-        }
+    public SearchHotCardAdapter(List<SearchHotCardItemDataModel> modelList, Context context) {
+        mDataModelList = modelList;
+        mContext = context;
     }
 
     /**
      * Click the card item and move to NewsDetailActivity
+     *
      * @param itemView
      */
     public void onClickListener(@NonNull View itemView) {
@@ -64,11 +46,6 @@ public class SearchHotCardAdapter extends RecyclerView.Adapter<SearchHotCardAdap
                 activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
             }
         });
-    }
-
-    public SearchHotCardAdapter(List<SearchHotCardItemDataModel> modelList, Context context) {
-        mDataModelList = modelList;
-        mContext = context;
     }
 
     @NonNull
@@ -94,5 +71,29 @@ public class SearchHotCardAdapter extends RecyclerView.Adapter<SearchHotCardAdap
     public int getItemCount() {
         // Return the total number of items
         return mDataModelList.size();
+    }
+
+    // View holder class whose objects represent each list item
+    public class SearchHotCardHolder extends RecyclerView.ViewHolder {
+        private final TextView mKeyTextView;
+        private final TextView mTitleTextView;
+        private final TextView mSourceUrlTextView;
+
+        public SearchHotCardHolder(@NonNull @NotNull View itemView) {
+            super(itemView);
+            mKeyTextView = itemView.findViewById(R.id.text_view_key);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSourceUrlTextView = itemView.findViewById(R.id.text_view_source_url);
+
+            onClickListener(itemView);
+        }
+
+        @SuppressLint({"SetTextI18n"})
+        public void bindData(SearchHotCardItemDataModel dataModel, Context context) {
+            int key = dataModel.getKey();
+            mKeyTextView.setText(Integer.toString(key));
+            mTitleTextView.setText(dataModel.getTitle());
+            mSourceUrlTextView.setText(dataModel.getDetailUrl());
+        }
     }
 }

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.example.toutiao.R;
 
-public class SearchView extends LinearLayout implements TextWatcher, View.OnClickListener{
+public class SearchView extends LinearLayout implements TextWatcher, View.OnClickListener {
     /**
      * 输入框
      */
@@ -33,7 +33,7 @@ public class SearchView extends LinearLayout implements TextWatcher, View.OnClic
         LayoutInflater.from(context).inflate(R.layout.search_bar, this, true);
         /** 找出控件 */
         mSearchEditText = findViewById(R.id.et_search);
-        mClearButton = (Button) findViewById(R.id.bt_clear);
+        mClearButton = findViewById(R.id.bt_clear);
         mContainerLinearlayout = findViewById(R.id.linearLayout_container);
         mClearButton.setVisibility(GONE);
         mSearchEditText.addTextChangedListener(this);
@@ -76,7 +76,6 @@ public class SearchView extends LinearLayout implements TextWatcher, View.OnClic
     public void setOnClickListener(@Nullable OnClickListener l) {
         super.setOnClickListener(l);
     }
-
 
 
     public void setEditTextClickable(Boolean clickable) {

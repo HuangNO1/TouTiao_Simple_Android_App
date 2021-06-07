@@ -4,8 +4,6 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -14,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 
 import com.example.toutiao.R;
 
@@ -26,11 +27,9 @@ import java.io.IOException;
  */
 public class CircleRefreshLayout extends FrameLayout {
 
-    private static String TAG = "pullToRefresh";
-
     private static final long BACK_TOP_DUR = 300;
     private static final long REL_DRAG_DUR = 200;
-
+    private static final String TAG = "pullToRefresh";
     private int mHeaderBackColor = 0xff8b90af;
     private int mHeaderForeColor = 0xffffffff;
     private int mHeaderCircleSmaller = 6;
@@ -50,7 +49,8 @@ public class CircleRefreshLayout extends FrameLayout {
     private ValueAnimator mUpBackAnimator;
     private ValueAnimator mUpTopAnimator;
 
-    private DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator(10);
+    private final DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator(10);
+    private OnCircleRefreshListener onCircleRefreshListener;
 
     public CircleRefreshLayout(Context context) {
         this(context, null, 0);
@@ -227,7 +227,7 @@ public class CircleRefreshLayout extends FrameLayout {
                         mUpBackAnimator.start();
                         mHeader.releaseDrag();
                         mIsRefreshing = true;
-                        if (onCircleRefreshListener!=null) {
+                        if (onCircleRefreshListener != null) {
                             try {
                                 onCircleRefreshListener.refreshing();
                             } catch (IOException | JSONException e) {
@@ -267,8 +267,6 @@ public class CircleRefreshLayout extends FrameLayout {
         mIsRefreshing = false;
         mHeader.setRefreshing(false);
     }
-
-    private OnCircleRefreshListener onCircleRefreshListener;
 
     public void setOnRefreshListener(OnCircleRefreshListener onCircleRefreshListener) {
         this.onCircleRefreshListener = onCircleRefreshListener;

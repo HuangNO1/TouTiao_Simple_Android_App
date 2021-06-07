@@ -57,7 +57,6 @@ import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.THR
  * A simple {@link Fragment} subclass.
  * Use the {@link NewsChannelFragment#newInstance} factory method to
  * create an instance of this fragment.
- * 让 fragment 实现 BGARefreshLayoutDelegate 接口
  */
 public class NewsChannelFragment extends Fragment {
     private final static String BASE_URL =
@@ -191,11 +190,11 @@ public class NewsChannelFragment extends Fragment {
         mCardListRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mCardListLayoutManager = new LinearLayoutManager(container.getContext());
+        mCardListLayoutManager = new LinearLayoutManager(getContext());
         mCardListRecyclerView.setLayoutManager(mCardListLayoutManager);
 
         // specify an adapter and pass in our data model list
-        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, container.getContext());
+        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
         mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);

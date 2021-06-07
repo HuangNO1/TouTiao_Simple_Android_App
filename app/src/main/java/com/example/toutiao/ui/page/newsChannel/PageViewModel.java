@@ -18,8 +18,8 @@ public class PageViewModel extends ViewModel {
 
     private final MutableLiveData<String> mCategory = new MutableLiveData<>();
 
-    public void setIndex(int index) {
-        mIndex.setValue(index);
+    public MutableLiveData<String> getCategory() {
+        return mCategory;
     }
 //
 //    public LiveData<String> getText() {
@@ -30,11 +30,11 @@ public class PageViewModel extends ViewModel {
         mCategory.setValue(category);
     }
 
-    public MutableLiveData<String> getCategory() {
-        return mCategory;
-    }
-
     public MutableLiveData<Integer> getIndex() {
         return mIndex;
+    }
+
+    public void setIndex(int index) {
+        mIndex.setValue(index);
     }
 }
