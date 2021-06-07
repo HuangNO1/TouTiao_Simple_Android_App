@@ -4,7 +4,6 @@
 此為**中南大學計算機學院** 軟件工程 18 級 大三 移動應用端開發課程 項目設計。
 
 **指導老師：曾鋒**
-製作人：黃柏曛
 
 項目開發需求指導書：[简易版今日头条](https://bytedance.feishu.cn/docs/doccnKvehaFYqdzDxaoOwkO6cah)
 
