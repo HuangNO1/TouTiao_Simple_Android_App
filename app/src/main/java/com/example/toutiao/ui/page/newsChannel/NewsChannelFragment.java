@@ -65,8 +65,8 @@ public class NewsChannelFragment extends Fragment {
     private static final String[] CATEGORY_ATTR = new String[]{
             "__all__",
             "news_tech",
+//            "news_image",
             "news_hot",
-            "news_image",
             "news_entertainment",
             "news_game",
             "news_sports",
@@ -582,11 +582,15 @@ public class NewsChannelFragment extends Fragment {
         // title
         Log.v("deal with news object", "news_title " + object.get("title").getAsString());
         String newsTitle = object.get("title").getAsString();
+        // remove \r \n \t
+        newsTitle = newsTitle.replaceAll("\r|\n|\t", "");
         // abstract
         String newsAbstract = newsTitle;
         Log.v("deal with news object", "news_abstract " + object.has("abstract"));
         if (object.has("abstract")) {
             newsAbstract = object.get("abstract").getAsString();
+            // remove \r \n \t
+            newsAbstract = newsAbstract.replaceAll("\r|\n|\t", "");
         }
         // comments count
         Log.v("deal with news object", "news_comments_count " + object.has("comments_count"));

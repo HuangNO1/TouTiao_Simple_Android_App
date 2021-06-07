@@ -21,14 +21,14 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
     private static final int[] TAB_TITLES = new int[] {
         R.string.title__all__,
-        R.string.title_news_tech
+        R.string.title_news_tech,
 //        R.string.title_news_image,
-//        R.string.title_news_hot,
-//        R.string.title_news_entertainment,
-//        R.string.title_news_game,
-//        R.string.title_news_sports,
-//        R.string.title_news_finance,
-//        R.string.title_digital,
+        R.string.title_news_hot,
+        R.string.title_news_entertainment,
+        R.string.title_news_game,
+        R.string.title_news_sports,
+        R.string.title_news_finance,
+        R.string.title_digital,
     };
     private final Context mContext;
 
