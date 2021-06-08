@@ -17,7 +17,34 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 
 **如果喜歡這個作品，麻煩給個 Star ，謝謝，這是給我的動力。**
 
-## 涉及技術點
+## 項目參數
+
+API 版本：SDK API 21
+
+依賴：
+
+```
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.airbnb.android:lottie:3.4.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+```
+
+## 技術點實現點
 
 ### 底部 Nav 導覽切換頁面 Fragment
 
@@ -68,7 +95,7 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 
 - `navigation/mobile_navigation.xml`
 
-**navigation** 是可以設計**導覽圖**的一個組件也包括 Fragment 頁面的跳轉動。
+**navigation** 是可以設計**導覽圖**的一個組件也包括 Fragment 頁面的跳轉。
 
 使用可以參考官方文檔 [Navigation 组件使用入门 - Android 开发者](https://developer.android.com/guide/navigation/navigation-getting-started?hl=zh-cn)。
 
@@ -2332,8 +2359,3 @@ public class NewsDetailActivity extends AppCompatActivity {
 ## License
 
 [The MIT License](https://github.com/HuangNO1/TouTiao_Simple_Android_App/blob/master/LICENSE)
-
-
-
-
-
