@@ -100,7 +100,7 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 </navigation>
 ```
 
-- layout/fragment_home、layout/fragment_video、layout/fragment_account
+- layout/fragment_home.xml、layout/fragment_video.xml、layout/fragment_account.xml
 
 三個 Fragment 需要創建，內容都一樣，自行替換裡面的參數。
 
@@ -225,14 +225,14 @@ public class VideoFragment extends Fragment {
 }
 ```
 
-## Swipe views with tabs 的多頻道展示
+### Swipe views with tabs 的多頻道展示
 
 這裡我一開始使用的是**舊的 API 方法(`ViewPagerFragment`、`PagerAdapter`)**，如果你使用的是：
 
 - androidx.viewpager.widget.ViewPager
 - androidx.fragment.app.FragmentPagerAdapter
 
-你會得到一個提示是這**兩個 API 是已經棄用(deprecated)**的，尤其是在寫 **FragmentPagerAdapter** 類的時候，Android Studio 會在父類類名上刪除線(Strikethrough)，所以我們需要切換到新的 API：
+你會得到一個提示是這**兩個 API 是已經棄用(`deprecated`)**的，尤其是在寫 **`FragmentPagerAdapter`** 類的時候，Android Studio 會在父類類名上刪除線(Strikethrough)，所以我們需要切換到新的 API：
 
 - androidx.viewpager2.widget.ViewPager2
 - androidx.viewpager2.adapter.FragmentStateAdapter
@@ -489,20 +489,12 @@ public class SectionsPagerAdapter extends FragmentStateAdapter {
 
 - ui/home/HomeFragment.java
 
-這是最關鍵的文件，關於設定 TabLayout 和 ViewPager2。
+這是最關鍵的文件，關於設定 `TabLayout`和 `ViewPager2`。
 
 ```java
 package com.example.toutiao.ui.home;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+// ...
 
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
@@ -601,7 +593,7 @@ public class HomeFragment extends Fragment {
 }
 ```
 
-## RecyclerView 渲染多種不同的新聞卡片
+### RecyclerView 渲染多種不同的新聞卡片
 
 由於一種的渲染方法比較簡單，通常設計者是卡在顯示多種類型的 RecyclerView Item，在多種卡片 item 的設計這裡我只需要設計一種 `DataModel` ，然後在 `DataModel` 中添加 `type` 成員變量判斷是哪種類型的卡片。
 
@@ -731,7 +723,7 @@ public class HomeFragment extends Fragment {
 
 - ui/card/newsCardList/NewsCardItemDataModel.java
 
-我在 `ui/card/newsCardList/` 創建了兩個文件：`NewsCardItemDataModel.java`、`NewsCardAdapter.java`，分別代表卡片的數據模型和 RecyclerView 適配器。
+我在 `ui/card/newsCardList/` 創建了兩個文件：`NewsCardItemDataModel.java`、`NewsCardAdapter.java`，分別代表卡片的數據模型和 `RecyclerView` 適配器。
 
 我這裡寫了**三種構造類方法對應三種不同類型的卡片所需數據**，並使用 `mItemType` 判斷卡片類型。
 
@@ -899,21 +891,14 @@ public class NewsCardItemDataModel {
 
 - ui/card/newsCardList/NewsCardAdapter.java
 
-這是渲染卡片的 RecyclerView 適配器類，**三種卡片類型就會有三種 ViewHolder 子類**。
+這是渲染卡片的 `RecyclerView` 適配器類，**三種卡片類型就會有三種 `ViewHolder` 子類**。
 
 `onCreateViewHolder` 綁定 UI 文件，`onBindViewHolder` 綁定數據。
 
 ```java
 package com.example.toutiao.ui.card.newsCardList;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+// ...
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1147,13 +1132,7 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 ```java
 package com.example.toutiao.ui.page.newsChannel;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+// ...
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1281,11 +1260,737 @@ public class NewsChannelFragment extends Fragment {
 }
 ```
 
-## 新聞數據請求與卡片渲染
+### 新聞數據請求與卡片渲染
 
 關於卡片渲染細節我已經在 **RecyclerView 顯示多種寫過了**，所以這裡專注於怎麼使用 OKhttp 進行數據請求，與重新回到主 UI Thread 進行卡片渲染。
 
+- models/news/NewsDataModel.java
 
+這個類是為了請求回來的數據做一個數據模型，方便後面將數據添入 `NewsCardItemDataModel`，使邏輯更加清晰。這裡一樣有三種構造函數，分別代表三種不同的卡片類型。
+
+```java
+package com.example.toutiao.models.news;
+
+import java.util.ArrayList;
+
+/**
+ * Data Model Class for news After requesting
+ */
+
+public class NewsDataModel {
+    public static final int NO_IMAGE_TYPE = 0;
+    public static final int ONE_IMAGE_TYPE = 1;
+    public static final int THREE_IMAGE_TYPE = 2;
+    // same
+    private int mNewsCardStyleType; // three different card style
+    private String mNewsId; // id
+    private String mNewsTitle; // news title
+    private String mNewsAbstract; // news abstract
+    private int mNewsCommentsCount; // comments count
+    private String mNewsSource; // author name
+    private String mNewsMediaAvatarUrl; // author avatar
+    private String mNewsSourceUrl; // detail page url
+    // different
+    private String mNewsImageUrl; // one image card style
+    private ArrayList<String> mNewsThreeImage; // three image card style
+
+    // no image style constructor
+    public NewsDataModel(
+            int newsCardStyleType,
+            String newsId,
+            String newsTitle,
+            String newsAbstract,
+            int newsCommentsCount,
+            String newsSource,
+            String newsMediaAvatarUrl,
+            String newsSourceUrl
+    ) {
+        mNewsCardStyleType = newsCardStyleType;
+        mNewsId = newsId;
+        mNewsTitle = newsTitle;
+        mNewsAbstract = newsAbstract;
+        mNewsCommentsCount = newsCommentsCount;
+        mNewsSource = newsSource;
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+        mNewsSourceUrl = newsSourceUrl;
+    }
+
+    // one image style constructor
+    public NewsDataModel(
+            int newsCardStyleType,
+            String newsId,
+            String newsTitle,
+            String newsAbstract,
+            int newsCommentsCount,
+            String newsSource,
+            String newsMediaAvatarUrl,
+            String newsSourceUrl,
+            String newsImageUrl
+    ) {
+        mNewsCardStyleType = newsCardStyleType;
+        mNewsId = newsId;
+        mNewsTitle = newsTitle;
+        mNewsAbstract = newsAbstract;
+        mNewsCommentsCount = newsCommentsCount;
+        mNewsSource = newsSource;
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+        mNewsSourceUrl = newsSourceUrl;
+        mNewsImageUrl = newsImageUrl;
+    }
+
+    // three image style constructor
+    public NewsDataModel(
+            int newsCardStyleType,
+            String newsId,
+            String newsTitle,
+            String newsAbstract,
+            int newsCommentsCount,
+            String newsSource,
+            String newsMediaAvatarUrl,
+            String newsSourceUrl,
+            ArrayList<String> newsThreeImage
+    ) {
+        mNewsCardStyleType = newsCardStyleType;
+        mNewsId = newsId;
+        mNewsTitle = newsTitle;
+        mNewsAbstract = newsAbstract;
+        mNewsCommentsCount = newsCommentsCount;
+        mNewsSource = newsSource;
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+        mNewsSourceUrl = newsSourceUrl;
+        mNewsThreeImage = newsThreeImage;
+    }
+
+    public int getNewsCardStyleType() {
+        return mNewsCardStyleType;
+    }
+
+    public void setNewsCardStyleType(int newsCardStyleType) {
+        mNewsCardStyleType = newsCardStyleType;
+    }
+
+    public String getNewsId() {
+        return mNewsId;
+    }
+
+    public void setNewsId(String newsId) {
+        mNewsId = newsId;
+    }
+
+    public String getNewsTitle() {
+        return mNewsTitle;
+    }
+
+    public void setNewsTitle(String newsTitle) {
+        mNewsTitle = newsTitle;
+    }
+
+    public String getNewsAbstract() {
+        return mNewsAbstract;
+    }
+
+    public void setNewsAbstract(String newsAbstract) {
+        mNewsAbstract = newsAbstract;
+    }
+
+    public int getNewsCommentsCount() {
+        return mNewsCommentsCount;
+    }
+
+    public void setNewsCommentsCount(int newsCommentsCount) {
+        mNewsCommentsCount = newsCommentsCount;
+    }
+
+    public String getNewsSource() {
+        return mNewsSource;
+    }
+
+    public void setNewsSource(String newsSource) {
+        mNewsSource = newsSource;
+    }
+
+    public String getNewsMediaAvatarUrl() {
+        return mNewsMediaAvatarUrl;
+    }
+
+    public void setNewsMediaAvatarUrl(String newsMediaAvatarUrl) {
+        mNewsMediaAvatarUrl = newsMediaAvatarUrl;
+    }
+
+    public String getNewsSourceUrl() {
+        return mNewsSourceUrl;
+    }
+
+    public void setNewsSourceUrl(String newsSourceUrl) {
+        mNewsSourceUrl = newsSourceUrl;
+    }
+
+    public String getNewsImageUrl() {
+        return mNewsImageUrl;
+    }
+
+    public void setNewsImageUrl(String newsImageUrl) {
+        mNewsImageUrl = newsImageUrl;
+    }
+
+    public ArrayList<String> getNewsThreeImage() {
+        return mNewsThreeImage;
+    }
+
+    /*
+     * add a image to mNewsThreeImage array list
+     */
+    public void setNewsThreeImage(String newsImageUrl) {
+        this.mNewsThreeImage.add(newsImageUrl);
+    }
+}
+```
+
+- ui/page/newsChannel/newsChannelFragment.java
+
+這裡是我們需要進行新聞內容請求的 Fragment。我使用的是 OkHttp 的方法，如果不知道 OkHttp 可以去 Github 看看 [square/okhttp - github](https://github.com/square/okhttp)。
+
+引入依賴需要在 `build.gradle` 中加上下面一段話：
+
+```
+dependencies {
+	// ...
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+}
+```
+
+**注意：為了能夠進行網路請求需要在 `/manifests/AndroidManifest.xml` 中加上  `<uses-permission android:name="android.permission.INTERNET" />` 這段話。**
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.toutiao">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+// ...
+```
+
+
+下面的 Code 中我分別使用 `getUserAgent()` 固定 UA，`getInitNews()` 請求新聞數據，`initRenderCardList()` 做數據渲染，`dealWithResponseBody()` 處理請求回來的 `ResponseBody`，`dealWithNewsObject()` 處理每個新聞列表，`runThread()` 負責請求後回到在主 UI 線程裡面進行渲染（也就是`initRenderCardList()`），這裡的注意點有：
+
+1. 除了固定 UA 外，需要將請求回來的 **`Response` 中 `Header` 的 `Set-Cookie`** 加入下一次請求中的 Cookie，這樣避免了**請求回來的數據與原數據重複性**。
+
+2. 請求必須使用多線程的方式進行異步請求，不能在 UI 主線程請求，這是新的 Android 規定，所以我建議可以使用 **`AsyncTask`** 或是 **Okhttp 的異步回調方法**。我下面的 Example 是使用了後者。
+
+3. OkHttp 中**異步請求的 `response.body().string()` 只能使用一次**，使用完一次後就會將回應 Body 刪除節省資源（我也不知道為什麼要這樣設計），所以需要先存成 `String` 類型，再接著使用。
+
+4. 注意**處理每一次數據，檢查是否有些數據不完整**，或是 ResponseBody 是空的情況都需要考慮，如果沒有考慮到，就會經常在運行項目時**產生 Crash**。
+
+```java
+package com.example.toutiao.ui.page.newsChannel;
+
+// ...
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.NO_IMAGE_TYPE;
+import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.ONE_IMAGE_TYPE;
+import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.THREE_IMAGE_TYPE;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link NewsChannelFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class NewsChannelFragment extends Fragment {
+    private final static String BASE_URL =
+            "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
+    private static final String[] CATEGORY_ATTR = new String[]{
+            "__all__",
+            "news_tech",
+//            "news_image",
+            "news_hot",
+            "news_entertainment",
+            "news_game",
+            "news_sports",
+            "news_finance",
+            "digital"
+    };
+    private final static String DEFAULT_AVATAR =
+            "https://img.88icon.com/download/jpg/20200901/84083236c883964781afea41f1ea4e9c_512_511.jpg!88bg";
+    private final static String DEFAULT_IMAGE =
+            "https://www.asiapacdigital.com/Zh_Cht/img/ap/services/reseller/TouTiao_1.jpg";
+    private ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
+    private PageViewModel mPageViewModel;
+    private RecyclerView mCardListRecyclerView;
+    private NewsCardAdapter mCardListAdapter;
+    private RecyclerView.LayoutManager mCardListLayoutManager;
+    private Boolean mIsScrollToTop = false;
+    private final List<NewsCardItemDataModel> mCardDataModelList = new ArrayList<>();
+    private String mCategory;
+    private int mIndex;
+    private boolean mIsRefresh = false;
+    private boolean mIsLoadMore = false;
+    private boolean mIsLoadingFail = false;
+    private int mMaxBehotTime = 0;
+    private String mCookie;
+
+    public NewsChannelFragment() {
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     */
+    public static NewsChannelFragment newInstance(String category, int index) {
+        NewsChannelFragment fragment = new NewsChannelFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("category", category);
+        bundle.putInt("index", index);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
+        if (getArguments() != null) {
+            mCategory = getArguments().getString("category");
+            mIndex = getArguments().getInt("index");
+        }
+        mPageViewModel.setCategory(mCategory);
+        mPageViewModel.setIndex(mIndex);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
+        // cardList
+        mCardListRecyclerView = view.findViewById(R.id.recycler_view_card_list);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mCardListRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mCardListLayoutManager = new LinearLayoutManager(getContext());
+        mCardListRecyclerView.setLayoutManager(mCardListLayoutManager);
+
+        // specify an adapter and pass in our data model list
+        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
+        mCardListRecyclerView.setAdapter(mCardListAdapter);
+
+        TextView mSectionLabelTextView = view.findViewById(R.id.text_view_section_label);
+
+            try {
+                // init
+                getInitNews();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+        mPageViewModel.getCategory().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                mSectionLabelTextView.setText(s);
+            }
+        });
+
+        return view;
+    }
+
+    // render the recycler view card list when init and refreshing
+    public void initRenderCardList() {
+        Log.v("start init render", "render init card, news list size: " + mNewsDataModelList.size());
+        for (int i = 0; i < mNewsDataModelList.size(); i++) {
+            int type = mNewsDataModelList.get(i).getNewsCardStyleType();
+            String newsId = mNewsDataModelList.get(i).getNewsId();
+            String newsTitle = mNewsDataModelList.get(i).getNewsTitle();
+            String newsAbstract = mNewsDataModelList.get(i).getNewsAbstract();
+            int newsCommentsCount = mNewsDataModelList.get(i).getNewsCommentsCount();
+            String newsSource = mNewsDataModelList.get(i).getNewsSource();
+            String newsMediaAvatarUrl = mNewsDataModelList.get(i).getNewsMediaAvatarUrl();
+            String newsSourceUrl = mNewsDataModelList.get(i).getNewsSourceUrl();
+
+            if (type == NO_IMAGE_TYPE) {
+                mCardDataModelList.add(new NewsCardItemDataModel(
+                        NO_IMAGE_TYPE,
+                        newsId,
+                        newsTitle,
+                        newsAbstract,
+                        newsCommentsCount,
+                        newsSource,
+                        newsMediaAvatarUrl,
+                        newsSourceUrl
+                ));
+            } else if (type == ONE_IMAGE_TYPE) {
+                String middleImage = mNewsDataModelList.get(i).getNewsImageUrl();
+                mCardDataModelList.add(new NewsCardItemDataModel(
+                        ONE_IMAGE_TYPE,
+                        newsId,
+                        newsTitle,
+                        newsAbstract,
+                        newsCommentsCount,
+                        newsSource,
+                        newsMediaAvatarUrl,
+                        newsSourceUrl,
+                        middleImage
+                ));
+
+            } else if (type == THREE_IMAGE_TYPE) {
+                ArrayList<String> newsThreeImage = mNewsDataModelList.get(i).getNewsThreeImage();
+                mCardDataModelList.add(new NewsCardItemDataModel(
+                        THREE_IMAGE_TYPE,
+                        newsId,
+                        newsTitle,
+                        newsAbstract,
+                        newsCommentsCount,
+                        newsSource,
+                        newsMediaAvatarUrl,
+                        newsSourceUrl,
+                        newsThreeImage
+                ));
+            }
+        }
+        mLoadingAnimationView.setVisibility(View.GONE);
+        mScreenMaskView.setVisibility(View.GONE);
+        mCardListRefreshLayout.finishRefreshing();
+        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
+        mCardListRecyclerView.setAdapter(mCardListAdapter);
+
+        mIsRefresh = false;
+    }
+
+    private String getUserAgent() {
+        String userAgent = "";
+        try {
+            userAgent = WebSettings.getDefaultUserAgent(getContext());
+        } catch (Exception e) {
+            userAgent = System.getProperty("https.agent");
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0, length = userAgent.length(); i < length; i++) {
+            char c = userAgent.charAt(i);
+            if (c <= '\u001f' || c >= '\u007f') {
+                sb.append(String.format("\\u%04x", (int) c));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * a methods to init card list
+     *
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void getInitNews() throws IOException, JSONException {
+        // init data
+        mNewsDataModelList.clear();
+        mCardDataModelList.clear();
+        mLoadingAnimationView.setVisibility(View.VISIBLE);
+        mMaxBehotTime = 0;
+        // setting request
+        OkHttpClient client = new OkHttpClient();
+        Log.v("request url", String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]));
+        Request request = new Request.Builder()
+                .get()
+                .url(String.format(Locale.ENGLISH, BASE_URL, mMaxBehotTime, CATEGORY_ATTR[mIndex]))
+                .addHeader("User-Agent", getUserAgent())
+                .build();
+        Call call = client.newCall(request);
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
+                Log.v("json status", " " + response.code());
+                Log.v("json body", " " + (response.body() != null));
+                String jsonData = response.body().string();
+                // deal with request body
+                dealWithResponseBody(jsonData);
+                mCookie = response.header("Set-Cookie");
+                Log.v("cookie", "set cookie: " + mCookie);
+            }
+        });
+    }
+
+    /**
+     * @param jsonData
+     */
+    public void dealWithResponseBody(String jsonData) {
+        // avoid that jsonData is null
+        if(jsonData.length() < 1) {
+            mIsLoadingFail = true;
+            // run on main ui thread
+            runThread();
+            return;
+        }
+        Log.v("deal with response", "string to JsonObject");
+        Log.v("deal with response", "json data\n" + jsonData);
+        JsonObject result = JsonParser.parseString(jsonData).getAsJsonObject();
+        Log.v("deal with response", "result, before max_behot_time " + mMaxBehotTime);
+        Log.v("deal with response", String.valueOf(result.getAsJsonObject("next").has("max_behot_time")));
+        mMaxBehotTime = result.getAsJsonObject("next").get("max_behot_time").getAsInt();
+        Log.v("deal with response", "After max_behot_time : " + mMaxBehotTime + " get news object");
+        JsonArray newsData = result.getAsJsonArray("data");
+        for (int i = 0; i < newsData.size(); i++) {
+            Log.v("deal with response", "newsObjects " + i);
+            try {
+                dealWithNewsObject(newsData.get(i).getAsJsonObject());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        runThread();
+    }
+
+    /**
+     * running on main UI thread to render card list
+     */
+    private void runThread() {
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        new Thread() {
+            public void run() {
+                // init & refresh
+                handler.post(() -> initRenderCardList());
+            }
+        }.start();
+    }
+
+    /**
+     * a methods to transfer JsonObject to NewsDataModel
+     *
+     * @param object
+     * @throws JSONException
+     */
+    public void dealWithNewsObject(JsonObject object) throws JSONException {
+        NewsDataModel temp;
+        // id
+        Log.v("deal with news object", "news_id " + object.get("group_id").getAsString());
+        String newsId = object.get("group_id").getAsString();
+        // title
+        Log.v("deal with news object", "news_title " + object.get("title").getAsString());
+        String newsTitle = object.get("title").getAsString();
+        // remove \r \n \t
+        newsTitle = newsTitle.replaceAll("\r|\n|\t", "");
+        // abstract
+        String newsAbstract = newsTitle;
+        Log.v("deal with news object", "news_abstract " + object.has("abstract"));
+        if (object.has("abstract")) {
+            newsAbstract = object.get("abstract").getAsString();
+            // remove \r \n \t
+            newsAbstract = newsAbstract.replaceAll("\r|\n|\t", "");
+        }
+        // comments count
+        Log.v("deal with news object", "news_comments_count " + object.has("comments_count"));
+        int newsCommentsCount = 0;
+        if (object.has("comments_count")) {
+            newsCommentsCount = object.get("comments_count").getAsInt();
+        }
+        // news source
+        Log.v("deal with news object", "news_source " + object.get("source").getAsString());
+        String newsSource = object.get("source").getAsString();
+        // news media avatar url
+        String newsMediaAvatarUrl = DEFAULT_AVATAR;
+        if (object.has("media_avatar_url")) {
+            newsMediaAvatarUrl = "https:" + object.get("media_avatar_url").getAsString();
+        }
+        // news source url
+        Log.v("deal with news object", "news_source_url " + object.get("source_url").getAsString());
+        String newsSourceUrl = object.get("source_url").getAsString();
+
+        Log.v("deal with news object", "have image_list " + object.has("image_list"));
+        Log.v("deal with news object", "single_mode " + object.get("single_mode").getAsBoolean());
+        // three image style
+        if (object.has("image_list")) {
+            JsonArray imageList = object.get("image_list").getAsJsonArray();
+            ArrayList<String> newsThreeImage = new ArrayList<>();
+
+            // the Json Array is not null
+            if(imageList.size() < 3) {
+                for (int i = 0; i < 3; i++) {
+                    // avoid url is null
+                    newsThreeImage.add(DEFAULT_IMAGE);
+                }
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    // avoid url is null
+                    String url = imageList.get(i).getAsJsonObject().get("url").getAsString();
+                    if(url.length() == 0) {
+                        url = DEFAULT_IMAGE;
+                    } else {
+                        url = "https:" + url;
+                    }
+                    newsThreeImage.add(url);
+                }
+            }
+            temp = new NewsDataModel(
+                    NewsDataModel.THREE_IMAGE_TYPE,
+                    newsId,
+                    newsTitle,
+                    newsAbstract,
+                    newsCommentsCount,
+                    newsSource,
+                    newsMediaAvatarUrl,
+                    newsSourceUrl,
+                    newsThreeImage
+            );
+        }
+        // one image style
+        else if (object.get("single_mode").getAsBoolean()) {
+            String middleImage = "https:" + object.get("image_url").getAsString();
+
+            temp = new NewsDataModel(
+                    NewsDataModel.ONE_IMAGE_TYPE,
+                    newsId,
+                    newsTitle,
+                    newsAbstract,
+                    newsCommentsCount,
+                    newsSource,
+                    newsMediaAvatarUrl,
+                    newsSourceUrl,
+                    middleImage
+            );
+        }
+        // no image style
+        else {
+            temp = new NewsDataModel(
+                    NewsDataModel.NO_IMAGE_TYPE,
+                    newsId,
+                    newsTitle,
+                    newsAbstract,
+                    newsCommentsCount,
+                    newsSource,
+                    newsMediaAvatarUrl,
+                    newsSourceUrl
+            );
+        }
+        mNewsDataModelList.add(temp);
+    }
+}
+```
+
+### 圖片緩存與懶加載
+
+圖片的緩存最直接的方法就是將圖片下載到本地緩存，然後顯示到圖片，然而網上有一個 API 是 [ square/picasso - Github](https://github.com/square/picasso)，實現原理可以看 [Picasso从使用到原理详解 - JasonWang's Blog](http://sniffer.site/2017/04/20/Picasso%E4%BB%8E%E4%BD%BF%E7%94%A8%E5%88%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3/)，這篇文章講的很好。**Picasso 可以將我們的圖片進行二級緩存**，並檢查內存是否有這張圖片，如果有就無需下載，沒有就進行 OkHttp 在線程池的子線程請求（也就是異步請求回調函數使用的線程）。
+
+我是將圖片緩存寫到了 `ui/card/newsCardList/NewsCardItemDataModel.java` 中的 `RecyclerView.ViewHolder` 子類中 `bindData()`，這裡就只寫一下簡單的使用方式。
+
+```java
+Picasso.get().load(dataModel.getAvatar()).into(mAvatarView);
+```
+
+### Pull To Refresh 刷新新聞內容
+
+刷新的部份我是推薦使用 AndroidX 官方的方法： `Swiperefreshlayout`，具體說明可參考官方的 [Swiperefreshlayout - Android Developers](https://developer.android.com/jetpack/androidx/releases/swiperefreshlayout)，雖然我一開始有考慮過網上一堆酷炫的第三方刷新頭，但是那些東西其實很多都是過時的，並不支持 AndroidX，使用上也有很多問題，或許你覺得 `Swiperefreshlayout` 很丑？但是包括 Bilibili 等手機應用大都是使用這個組件。而我目前使用的是 Github 上別人的開源項目 [tuesda/CircleRefreshLayout - Github](https://github.com/tuesda/CircleRefreshLayout)，因為這項目是已經過時的，所以我自己將該項目下載下來自己修改過時的 API，將其套用在自己的項目上，然而這項目依然有一些問題存在，但作者似乎也沒打算更新？
+
+這裡就介紹如何用 Swiperefreshlayout。也可以看 [Implementing Pull to Refresh Guide - CODEPATH](https://guides.codepath.com/android/implementing-pull-to-refresh-guide)
+
+首先要加上依賴
+
+```
+dependencies {
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+}
+```
+
+接著在 xml 中需要刷新渲染的 `RecyclerView` 或是 `ListView` 加上該組件。
+
+```xml
+<!-- ... -->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swiperefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+<!-- ... -->
+```
+
+在你的
+
+```
+public class TimelineActivity extends Activity {
+
+    private SwipeRefreshLayout swipeContainer;
+
+    @Override
+
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        // Only ever call `setContentView` once right at the top
+        setContentView(R.layout.activity_main);
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0);
+            } 
+
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright, 
+                android.R.color.holo_green_light, 
+                android.R.color.holo_orange_light, 
+                android.R.color.holo_red_light);
+    }
+
+
+
+    public void fetchTimelineAsync(int page) {
+
+        // Send the network request to fetch the updated data
+        // `client` here is an instance of Android Async HTTP
+        // getHomeTimeline is an example endpoint.
+        client.getHomeTimeline(new JsonHttpResponseHandler() {
+            public void onSuccess(JSONArray json) {
+                // Remember to CLEAR OUT old items before appending in the new ones
+                adapter.clear();
+                // ...the data has come back, add new items to your adapter...
+                adapter.addAll(...);
+                // Now we call setRefreshing(false) to signal refresh has finished
+                swipeContainer.setRefreshing(false);
+            }
+
+            public void onFailure(Throwable e) {
+                Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+            }
+
+        });
+
+    }
+}
+```
+
+
+### Load More 加載更多
+
+### 點擊新聞卡片進入新聞詳情頁與 WebView 顯示
 
 
 > 待更新...
