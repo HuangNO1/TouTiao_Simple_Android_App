@@ -1990,6 +1990,15 @@ mCardListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 });
 ```
 
+這裡比較需要注意的地方是如果需要在加載更多後的 `mCardListAdapter` 要**使用 `notifyDataSetChanged()` 方法更新頁面的 Item 渲染**。
+
+```java
+mCardListAdapter.setDataModelList(tempCardDataModelList);
+Log.v("after load more", "card list size: " + mCardListAdapter.getItemCount());
+mIsLoadMore = false;
+mCardListAdapter.notifyDataSetChanged();
+```
+
 ### 點擊新聞卡片進入新聞詳情頁與 WebView 顯示
 
 這裡我是在新聞卡片的適配器裡面去做，將 View 設置點擊事件，然後新增一個新聞活動頁面。
