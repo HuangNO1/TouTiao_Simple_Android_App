@@ -27,7 +27,7 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 
 > 注意：目錄的正確需要自己去修改
 
-- layout/activity.xml
+- `layout/activity.xml`
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -66,7 +66,7 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-- navigation/mobile_navigation.xml
+- `navigation/mobile_navigation.xml`
 
 **navigation** 是可以設計**導覽圖**的一個組件也包括 Fragment 頁面的跳轉動。
 
@@ -100,7 +100,7 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 </navigation>
 ```
 
-- layout/fragment_home.xml、layout/fragment_video.xml、layout/fragment_account.xml
+- `layout/fragment_home.xml`、`layout/fragment_video.xml`、`layout/fragment_account.xml`
 
 三個 Fragment 需要創建，內容都一樣，自行替換裡面的參數。
 
@@ -121,7 +121,7 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 </FrameLayout>
 ```
 
-- activity/MainActivity.java
+- `activity/MainActivity.java`
 
 ```java
 package com.example.toutiao.activity;
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-- ui/home/HomeFragment.java、ui/video/VideoFragment.java、ui/account/AccountFragment.java
+- `ui/home/HomeFragment.java`、`ui/video/VideoFragment.java`、`ui/account/AccountFragment.java`
 
 這三個類文件都一致，自己去做調整。以下取 `VideoFragment.java` 作為參考。
 
@@ -241,7 +241,7 @@ public class VideoFragment extends Fragment {
 
 > 註：由於這個的 tabbed 項目需求的頁面是相同的，都是展示新聞卡片，**所以我們就只需要設計一個 Fragment 類**，但是如果我們需要每個新聞頻道 Tab 頁面有不同的設計，就需要設計多個 Fragment 類。
 
-- layout/fragment_home.xml
+- `layout/fragment_home.xml`
 
 我需要在 Home Fragment 展示我的 Tabs，然後在 **NewsChannelFragment** 顯示各頁面內容，這裡我們有 `TabLayout` 和最新的 `ViewPager2`。
 
@@ -313,7 +313,7 @@ public class VideoFragment extends Fragment {
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 ```
 
-- layout/fragment_news_channel.xml
+- `layout/fragment_news_channel.xml`
 
 這裡就沒有比較需要注意的東西。
 
@@ -334,7 +334,7 @@ public class VideoFragment extends Fragment {
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 ```
 
-- ui/page/newsChannel/newsChannelFragment.java
+- `ui/page/newsChannel/newsChannelFragment.java`
 
 我在 `ui/page/newsChannel` 目錄下加了三個文件，分別是 `newsChannelFragment.java`、`PageViewModel.java`、`SectionsPagerAdapter.java`。代表我們需要的 Fragment 頻道展示頁面、Fragment 的 ViewModel、ViewPager 的適配器。
 
@@ -404,7 +404,7 @@ public class NewsChannelFragment extends Fragment {
 }
 ```
 
-- ui/page/newsChannel/PageViewModel.java
+- `ui/page/newsChannel/PageViewModel.java`
 
 ```java
 package com.example.toutiao.ui.page.newsChannel;
@@ -438,7 +438,7 @@ public class PageViewModel extends ViewModel {
 }
 ```
 
-- ui/page/newsChannel/SectionsPagerAdapter.java
+- `ui/page/newsChannel/SectionsPagerAdapter.java`
 
 這裡使用的是最新的 API：`FragmentStateAdapter`。成員變量 `mArrayList` 是我們的 `Fragment` 數組，我們渲染多少頻道就有多大。`addFragment` 方法添加新的 `fragment`。
 
@@ -487,7 +487,7 @@ public class SectionsPagerAdapter extends FragmentStateAdapter {
 }
 ```
 
-- ui/home/HomeFragment.java
+- `ui/home/HomeFragment.java`
 
 這是最關鍵的文件，關於設定 `TabLayout`和 `ViewPager2`。
 
@@ -599,7 +599,7 @@ public class HomeFragment extends Fragment {
 
 以下我舉出實現的 Example，簡化的部份 Code，這裡的 Code 去掉： HTTP 請求的渲染、Pull To ReFresh、Load More。後面會再一一舉例。
 
-- layout/fragment_news_channel.xml
+- `layout/fragment_news_channel.xml`
 
 在需要渲染列表的地方加上 RecyclerView 組件。
 
@@ -721,7 +721,7 @@ public class HomeFragment extends Fragment {
 </androidx.cardview.widget.CardView>
 ```
 
-- ui/card/newsCardList/NewsCardItemDataModel.java
+- `ui/card/newsCardList/NewsCardItemDataModel.java`
 
 我在 `ui/card/newsCardList/` 創建了兩個文件：`NewsCardItemDataModel.java`、`NewsCardAdapter.java`，分別代表卡片的數據模型和 `RecyclerView` 適配器。
 
@@ -889,7 +889,7 @@ public class NewsCardItemDataModel {
 }
 ```
 
-- ui/card/newsCardList/NewsCardAdapter.java
+- `ui/card/newsCardList/NewsCardAdapter.java`
 
 這是渲染卡片的 `RecyclerView` 適配器類，**三種卡片類型就會有三種 `ViewHolder` 子類**。
 
@@ -1125,7 +1125,7 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 }
 ```
 
-- ui/page/newsChannel/newsChannelFragment.java
+- `ui/page/newsChannel/newsChannelFragment.java`
 
 在需要渲染的 Fragment，添加渲染 Code。
 
@@ -1262,9 +1262,9 @@ public class NewsChannelFragment extends Fragment {
 
 ### 新聞數據請求與卡片渲染
 
-關於卡片渲染細節我已經在 **RecyclerView 顯示多種寫過了**，所以這裡專注於怎麼使用 OKhttp 進行數據請求，與重新回到主 UI Thread 進行卡片渲染。
+關於卡片渲染細節我已經在 **RecyclerView 顯示多種寫過了**，所以這裡專注於怎麼使用 OkHttp 進行數據請求，與重新回到主 UI Thread 進行卡片渲染。
 
-- models/news/NewsDataModel.java
+- `models/news/NewsDataModel.java`
 
 這個類是為了請求回來的數據做一個數據模型，方便後面將數據添入 `NewsCardItemDataModel`，使邏輯更加清晰。這裡一樣有三種構造函數，分別代表三種不同的卡片類型。
 
@@ -1446,7 +1446,7 @@ public class NewsDataModel {
 }
 ```
 
-- ui/page/newsChannel/newsChannelFragment.java
+- `ui/page/newsChannel/newsChannelFragment.java`
 
 這裡是我們需要進行新聞內容請求的 Fragment。我使用的是 OkHttp 的方法，如果不知道 OkHttp 可以去 Github 看看 [square/okhttp - github](https://github.com/square/okhttp)。
 
@@ -1923,17 +1923,14 @@ dependencies {
 <!-- ... -->
 ```
 
-在你的
+下拉刷新組件都會有個**監聽刷新動作的方法**讓你使用，你可以在組件的相關說明文檔找到。在你的刷新地方進行刷新監聽。
 
-```
+```java
 public class TimelineActivity extends Activity {
-
     private SwipeRefreshLayout swipeContainer;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         // Only ever call `setContentView` once right at the top
@@ -1948,7 +1945,7 @@ public class TimelineActivity extends Activity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                fetchTimelineAsync(0);
+                refreshData();
             } 
 
         });
@@ -1959,43 +1956,373 @@ public class TimelineActivity extends Activity {
                 android.R.color.holo_orange_light, 
                 android.R.color.holo_red_light);
     }
+}
+```
 
+### Load More 加載更多
 
+這裡需要使用 `RecyclerView` 的監聽滾動方法，當無法在往下滾動的時候，就調用加載更多的方法。
 
-    public void fetchTimelineAsync(int page) {
+以下是 `RecyclerView` 設置滾動監聽的參考案例：
 
-        // Send the network request to fetch the updated data
-        // `client` here is an instance of Android Async HTTP
-        // getHomeTimeline is an example endpoint.
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            public void onSuccess(JSONArray json) {
-                // Remember to CLEAR OUT old items before appending in the new ones
-                adapter.clear();
-                // ...the data has come back, add new items to your adapter...
-                adapter.addAll(...);
-                // Now we call setRefreshing(false) to signal refresh has finished
-                swipeContainer.setRefreshing(false);
+這裡使用了 `addOnScrollListener` 方法做滾動監聽，接著在 `onScrolled` 方法中做處理，`!recyclerView.canScrollVertically(1)` 代表 `recyclerView` 已經無法繼續往下滾了。
+
+```java
+// cardList
+mCardListRecyclerView = view.findViewById(R.id.recycler_view_card_list);
+mCardListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    @Override
+    public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+    }
+
+    @Override
+    public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        if (!recyclerView.canScrollVertically(1)) { // 1 for down
+            try {
+                loadMoreNews();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
+        }
+    }
+});
+```
 
-            public void onFailure(Throwable e) {
-                Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+### 點擊新聞卡片進入新聞詳情頁與 WebView 顯示
+
+這裡我是在新聞卡片的適配器裡面去做，將 View 設置點擊事件，然後新增一個新聞活動頁面。
+
+- `ui/card/newsCardList/NewsCardAdapter.java`
+
+下面的 Code 中我舉出 `NoImageCardViewHolder` 子類，裡面的構造函數中去做 `itemView` 的點擊事件，點擊事件涉及到了傳參部份，傳參使用 `intent.putExtra()` 方法，然後在 `NewsDetailActivity` 做接收參數。
+
+```java
+public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final List<NewsCardItemDataModel> mDataModelList;
+    private final Context mContext;
+    
+    // ...
+    
+    /**
+     * Click the card item and move to NewsDetailActivity
+     *
+     * @param itemView
+     */
+    public void onClickListener(@NonNull View itemView) {
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Activity activity = (Activity) mContext;
+                TextView mSourceUrl = itemView.findViewById(R.id.text_view_source_url);
+                Intent intent = new Intent(activity, NewsDetailActivity.class);
+                intent.putExtra("source_url", mSourceUrl.getText().toString());
+                mContext.startActivity(intent);
+                activity.overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left);
             }
+        });
+    }
+    
+    // No image style card view holder
+    class NoImageCardViewHolder extends RecyclerView.ViewHolder {
+        private final ImageView mAvatarView;
+        private final TextView mTitleTextView;
+        private final TextView mSubTitleTextView;
+        private final TextView mBottomTextView;
+        private final TextView mSourceUrlTextView;
 
+        public NoImageCardViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mAvatarView = itemView.findViewById(R.id.image_view_card_avatar);
+            mTitleTextView = itemView.findViewById(R.id.text_view_card_title);
+            mSubTitleTextView = itemView.findViewById(R.id.text_view_card_subtitle);
+            mBottomTextView = itemView.findViewById(R.id.text_view_card_bottom_text);
+            mSourceUrlTextView = itemView.findViewById(R.id.text_view_source_url);
+            // set onClick
+            onClickListener(itemView);
+        }
+
+        public void bindData(NewsCardItemDataModel dataModel, Context context) {
+            // ...
+        }
+    }
+    
+}
+```
+
+- `layout/activity_news_detail.xml`
+
+這個是 `NewsDetailActivity` 的 `xml` Layout 文件。
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.NewsDetailActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_height="40dp"
+        android:layout_width="match_parent"
+        android:background="@color/tabbed_bg">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:toolbarId="@+id/toolbar"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/tool_bar"
+                android:layout_height="40dp"
+                android:layout_width="match_parent">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/button_back"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_margin="1dp"
+                        android:backgroundTint="@color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:background="@drawable/ic_baseline_arrow_back_ios_24"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view_web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.page.news_detail.NewsDetailFragment">
+
+            <WebView
+                android:id="@+id/web_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_loading"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </FrameLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_scroll_to_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/red_200"
+        android:clickable="true"
+        android:contentDescription="@string/scrolltotop"
+        android:focusable="true"
+        android:isScrollContainer="false"
+        android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+        android:tint="@color/white"
+        app:borderWidth="0dp" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+```
+
+- `activity/NewsDetailActivity.java`
+
+在 `onCreate()` 中用 `Bundle args = getIntent().getExtras();` 獲取傳來的 `source_url`，並設置 `WebView` 顯示該連結。
+
+```java
+package com.example.toutiao.activity;
+
+// ...
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+
+import com.airbnb.lottie.LottieAnimationView;
+import com.example.toutiao.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+/**
+ * A Activity to be showed news detail.
+ */
+
+public class NewsDetailActivity extends AppCompatActivity {
+
+    private WebView mNewsDetailWebView;
+    private ProgressBar mProgressBar;
+    private Button mBackButton;
+    private LottieAnimationView mLoadingAnimationView;
+    private FloatingActionButton mScrollToTopFAB;
+    private NestedScrollView mWebNestedScrollView;
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @SuppressLint("SetJavaScriptEnabled")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_news_detail);
+
+        Bundle args = getIntent().getExtras();
+        String url = "";
+        if (args != null) {
+            url = args.getString("source_url");
+        }
+
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getResources().getColor(R.color.tabbed_bg));
+
+        mLoadingAnimationView = findViewById(R.id.animation_view_loading);
+        mLoadingAnimationView.setAnimation("load-animation.json");
+        mLoadingAnimationView.setSpeed(1);
+        mLoadingAnimationView.playAnimation();
+
+        mNewsDetailWebView = findViewById(R.id.web_view);
+        mProgressBar = findViewById(R.id.progress_bar_loading);
+        mProgressBar.setMax(100);
+        mProgressBar.setProgress(1);
+        // avoid the url has "http"
+        if (url.contains("http")) {
+            setNewsDetailWebView(url);
+        } else {
+            setNewsDetailWebView("https://m.toutiao.com" + url);
+        }
+
+
+        mBackButton = findViewById(R.id.button_back);
+        setBackButtonOnClick();
+
+        mWebNestedScrollView = findViewById(R.id.nested_scroll_view_web);
+        mWebNestedScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == 0) {
+                    // hide FAB when NestedScrollView is at the top
+                    mScrollToTopFAB.hide();
+                } else {
+                    mScrollToTopFAB.show();
+                }
+            }
         });
 
+        mScrollToTopFAB = findViewById(R.id.fab_scroll_to_top);
+        mScrollToTopFAB.hide();
+        mScrollToTopFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // scroll to top
+                mWebNestedScrollView.smoothScrollTo(0, 0);
+            }
+        });
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private void setNewsDetailWebView(String url) {
+
+        // TODO: Make WebView Faster
+
+        mNewsDetailWebView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                mProgressBar.setProgress(progress);
+            }
+        });
+
+        mNewsDetailWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                mLoadingAnimationView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        mNewsDetailWebView.getSettings().setAppCacheEnabled(true);
+        mNewsDetailWebView.getSettings().setLoadsImagesAutomatically(true);
+        mNewsDetailWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        // hardware acceleration
+        mNewsDetailWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        // enabling javascript
+        mNewsDetailWebView.getSettings().setJavaScriptEnabled(true);
+        // enable Dom storage
+        mNewsDetailWebView.getSettings().setDomStorageEnabled(true);
+
+        mNewsDetailWebView.loadUrl(url);
+    }
+
+    private void setBackButtonOnClick() {
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Leave();
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mNewsDetailWebView.canGoBack()) {
+            mNewsDetailWebView.goBack();
+        } else {
+            Leave();
+        }
+    }
+
+    /**
+     * back to MainActivity
+     */
+    public void Leave() {
+//        mNewsDetailWebView.clearCache(true);
+//        mNewsDetailWebView.clearHistory();
+//        mNewsDetailWebView.clearFormData();
+        finish();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 }
 ```
 
+## 項目心得
 
-### Load More 加載更多
+由於這次的項目因為我本身是安卓零基礎，而我卻使用了一週的時間將整體的 Code 邏輯架構寫好了，這是因為我會使用 Google 用關鍵字搜索，StackOverFlow 大多數時候都能給我比較好的答案，在做項目之前我頂多是有了做過 Qt C++ 的基礎，所以了解了一下安卓的組件生命週期還有哪些控件和布局，我就直接邊做邊學，我覺得這樣子對我的成長和動手能力提升很多，也謝謝字節跳動客戶端開發的大哥們一直提點我的不足。最終得以完成這個項目。
 
-### 點擊新聞卡片進入新聞詳情頁與 WebView 顯示
+## License
 
-
-> 待更新...
-
-
+[The MIT License](https://github.com/HuangNO1/TouTiao_Simple_Android_App/blob/master/LICENSE)
 
 
 
