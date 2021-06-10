@@ -9,17 +9,6 @@
     android:orientation="vertical"
     tools:context=".ui.page.newsChannel.NewsChannelFragment">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleX="0.7"
-        android:scaleY="0.7"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -87,12 +76,23 @@
         android:id="@+id/view_screen_mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.3"
+        android:alpha="0"
         android:background="#FFFFFF"
         android:elevation="5dp"
         android:nestedScrollingEnabled="false"
         android:clickable="true"
         android:focusable="true"
         android:contentDescription="@string/image_url" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

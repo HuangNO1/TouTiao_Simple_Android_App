@@ -3,6 +3,7 @@ package com.example.toutiao.activity;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +22,8 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.toutiao.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
+
 /**
  * A Activity to be showed news detail.
  */
@@ -34,12 +37,17 @@ public class NewsDetailActivity extends AppCompatActivity {
     private FloatingActionButton mScrollToTopFAB;
     private NestedScrollView mWebNestedScrollView;
 
+    private Date mStart;
+    private Date mEnd;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
+
+        mStart = new Date();
 
         Bundle args = getIntent().getExtras();
         String url = "";
@@ -107,9 +115,10 @@ public class NewsDetailActivity extends AppCompatActivity {
         });
 
         mNewsDetailWebView.setWebViewClient(new WebViewClient() {
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                mProgressBar.setVisibility(View.VISIBLE);
+                // mProgressBar.setVisibility(View.VISIBLE);
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
@@ -117,12 +126,23 @@ public class NewsDetailActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 mLoadingAnimationView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.GONE);
+                mEnd = new Date();
+                Log.v("during", String.valueOf(mEnd.getTime() - mStart.getTime()) + " ms");
             }
         });
 
+        WebView.setWebContentsDebuggingEnabled(true);
+
+        // set cache
         mNewsDetailWebView.getSettings().setAppCacheEnabled(true);
+        mNewsDetailWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
+        // let webView can load http image
         mNewsDetailWebView.getSettings().setLoadsImagesAutomatically(true);
-        mNewsDetailWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        mNewsDetailWebView.getSettings().setBlockNetworkImage(false); // Solve the image does not display
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mNewsDetailWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
         // hardware acceleration
         mNewsDetailWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         // enabling javascript

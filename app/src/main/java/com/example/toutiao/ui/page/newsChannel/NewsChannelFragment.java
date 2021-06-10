@@ -131,7 +131,7 @@ public class NewsChannelFragment extends Fragment {
 
         // screen mask show when loading
         mScreenMaskView = view.findViewById(R.id.view_screen_mask);
-        mScreenMaskView.setVisibility(View.GONE);
+        mScreenMaskView.setVisibility(View.VISIBLE);
 
         // setting loading animation view
         mLoadingAnimationView = view.findViewById(R.id.animation_view_loading);
@@ -286,8 +286,9 @@ public class NewsChannelFragment extends Fragment {
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
         mCardListRefreshLayout.finishRefreshing();
-        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
-        mCardListRecyclerView.setAdapter(mCardListAdapter);
+//        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
+//        mCardListRecyclerView.setAdapter(mCardListAdapter);
+        mCardListAdapter.notifyDataSetChanged();
 
         mIsRefresh = false;
     }
