@@ -17,6 +17,10 @@ Code Style：[Android程式碼命名規範 - itread01](https://www.itread01.com/
 
 **如果喜歡這個作品，麻煩給個 Star ，謝謝，這是給我的動力。**
 
+## Display
+
+![TouTiao.gif](preview/TouTiao.gif)
+
 ## 項目參數
 
 API 版本：SDK API 21
