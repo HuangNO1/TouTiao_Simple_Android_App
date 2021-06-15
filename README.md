@@ -46,6 +46,8 @@ dependencies {
 
 ## 技術點實現點
 
+已經文章發布到我的 Blog：[Android Java - 簡易今日頭條 - Rem Blog](https://huangno1.github.io/categories/android/)。
+
 ### 底部 Nav 導覽切換頁面 Fragment
 
 使用 **BottomNavigationView**、**NavController** 與 **NavigationUI.setupWithNavController()** 方法去實現。
@@ -259,7 +261,7 @@ public class VideoFragment extends Fragment {
 - androidx.viewpager.widget.ViewPager
 - androidx.fragment.app.FragmentPagerAdapter
 
-你會得到一個提示是這**兩個 API 是已經棄用(`deprecated`)**的，尤其是在寫 **`FragmentPagerAdapter`** 類的時候，Android Studio 會在父類類名上刪除線(Strikethrough)，所以我們需要切換到新的 API：
+你會得到一個提示是這 **兩個 API 是已經棄用(`deprecated`)** 的，尤其是在寫 **`FragmentPagerAdapter`** 類的時候，Android Studio 會在父類類名上刪除線(Strikethrough)，所以我們需要切換到新的 API：
 
 - androidx.viewpager2.widget.ViewPager2
 - androidx.viewpager2.adapter.FragmentStateAdapter
