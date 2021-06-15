@@ -127,7 +127,7 @@ public class NewsDetailActivity extends AppCompatActivity {
                 mLoadingAnimationView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.GONE);
                 mEnd = new Date();
-                Log.v("during", String.valueOf(mEnd.getTime() - mStart.getTime()) + " ms");
+                Log.v("during", (mEnd.getTime() - mStart.getTime()) + " ms");
             }
         });
 

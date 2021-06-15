@@ -2,7 +2,7 @@ package com.example.toutiao.ui.page.searchHotEvent;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +24,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,8 +42,13 @@ import okhttp3.Response;
  */
 public class SearchHotEventFragment extends Fragment {
 
-    private final static String BASE_URL =
+    private static final String BASE_URL =
             "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc";
+    private static final String RES_BODY_TAG = "deal with response";
+    private static final String NEWS_OBJECT_TAG = "deal with news object";
+    private static final int INIT_LIST = 0;
+    private static final int LOAD_FAIL = 1;
+
     private RecyclerView mCardListRecyclerView;
     private SearchHotCardAdapter mCardListAdapter;
     private RecyclerView.LayoutManager mCardListLayoutManager;
@@ -77,6 +82,18 @@ public class SearchHotEventFragment extends Fragment {
 
     }
 
+    private final Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            if (msg.what == INIT_LIST) {
+                initRenderCardList();
+            } else if (msg.what == LOAD_FAIL) {
+                loadingFail();
+            }
+            return false;
+        }
+    });
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,21 +113,15 @@ public class SearchHotEventFragment extends Fragment {
         mCardListAdapter = new SearchHotCardAdapter(mCardDataModelList, container.getContext());
         mCardListRecyclerView.setAdapter(mCardListAdapter);
 
-        try {
-            getInitNews();
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
+        getInitNews();
+
         return view;
     }
 
     /**
      * a methods to init card list
-     *
-     * @throws IOException
-     * @throws JSONException
      */
-    public void getInitNews() throws IOException, JSONException {
+    public void getInitNews() {
         // init data
         mNewsDataModelList.clear();
         mCardDataModelList.clear();
@@ -145,38 +156,35 @@ public class SearchHotEventFragment extends Fragment {
         if (jsonData.length() < 1) {
             mIsLoadingFail = true;
             // run on main ui thread
-            runThread();
+            // runThread();
+            mHandler.sendEmptyMessage(LOAD_FAIL);
             return;
         }
 
-        Log.v("deal with response", "string to JsonObject");
-        Log.v("deal with response", "json data\n" + jsonData);
+        Log.v(RES_BODY_TAG, "string to JsonObject");
+        Log.v(RES_BODY_TAG, "json data\n" + jsonData);
         JsonObject result = JsonParser.parseString(jsonData).getAsJsonObject();
         JsonArray newsData = result.getAsJsonArray("data");
         for (int i = 0; i < newsData.size(); i++) {
-            Log.v("deal with response", "newsObjects " + i);
-            try {
-                dealWithNewsObject(i, newsData.get(i).getAsJsonObject());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Log.v(RES_BODY_TAG, "newsObjects " + i);
+            dealWithNewsObject(i, newsData.get(i).getAsJsonObject());
         }
-        runThread();
+        // runThread();
+        mHandler.sendEmptyMessage(INIT_LIST);
     }
 
     /**
      * a methods to transfer JsonObject to NewsDataModel
      *
      * @param object
-     * @throws JSONException
      */
-    public void dealWithNewsObject(int key, JsonObject object) throws JSONException {
+    public void dealWithNewsObject(int key, JsonObject object) {
         SearchHotEventDataModel temp;
         // title
-        Log.v("deal with news object", "title " + object.get("Title").getAsString());
+        Log.v(NEWS_OBJECT_TAG, "title " + object.get("Title").getAsString());
         String newsTitle = object.get("Title").getAsString();
         // news source url
-        Log.v("deal with news object", "Url " + object.get("Url").getAsString());
+        Log.v(NEWS_OBJECT_TAG, "Url " + object.get("Url").getAsString());
         String newsSourceUrl = object.get("Url").getAsString();
 
         temp = new SearchHotEventDataModel(key + 1, newsTitle, newsSourceUrl);
@@ -186,22 +194,21 @@ public class SearchHotEventFragment extends Fragment {
     /**
      * running on main UI thread to render card list
      */
-    private void runThread() {
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        new Thread() {
-            public void run() {
-                if (mIsLoadingFail) {
-                    // fail
-                    handler.post(() -> loadingFail());
-                } else {
-                    // init
-                    handler.post(() -> initRenderCardList());
-                }
-            }
-        }.start();
-    }
-
+//    private void runThread() {
+//        Handler handler = new Handler(Looper.getMainLooper());
+//
+//        new Thread() {
+//            public void run() {
+//                if (mIsLoadingFail) {
+//                    // fail
+//                    handler.post(() -> loadingFail());
+//                } else {
+//                    // init
+//                    handler.post(() -> initRenderCardList());
+//                }
+//            }
+//        }.start();
+//    }
     private void initRenderCardList() {
         Log.v("start init render", "render init card, news list size: " + mNewsDataModelList.size());
         for (int i = 0; i < mNewsDataModelList.size(); i++) {

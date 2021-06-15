@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,7 +59,7 @@ import static com.example.toutiao.ui.card.newsCardList.NewsCardItemDataModel.THR
  * create an instance of this fragment.
  */
 public class NewsChannelFragment extends Fragment {
-    private final static String BASE_URL =
+    private static final String BASE_URL =
             "https://www.toutiao.com/api/pc/feed/?max_behot_time=%d&category=%s";
     private static final String[] CATEGORY_ATTR = new String[]{
             "__all__",
@@ -72,10 +72,16 @@ public class NewsChannelFragment extends Fragment {
             "news_finance",
             "digital"
     };
-    private final static String DEFAULT_AVATAR =
+    private static final String DEFAULT_AVATAR =
             "https://img.88icon.com/download/jpg/20200901/84083236c883964781afea41f1ea4e9c_512_511.jpg!88bg";
-    private final static String DEFAULT_IMAGE =
+    private static final String DEFAULT_IMAGE =
             "https://www.asiapacdigital.com/Zh_Cht/img/ap/services/reseller/TouTiao_1.jpg";
+    private static final String NEWS_OBJECT_TAG = "deal with news object";
+    private static final String RES_BODY_TAG = "deal with response";
+    private static final int INIT_OR_REFRESH = 0;
+    private static final int LOAD_MORE = 1;
+    private static final int LOAD_FAIL = 2;
+
     private ArrayList<NewsDataModel> mNewsDataModelList = new ArrayList<>();
     private PageViewModel mPageViewModel;
     private RecyclerView mCardListRecyclerView;
@@ -122,112 +128,6 @@ public class NewsChannelFragment extends Fragment {
         }
         mPageViewModel.setCategory(mCategory);
         mPageViewModel.setIndex(mIndex);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
-
-        // screen mask show when loading
-        mScreenMaskView = view.findViewById(R.id.view_screen_mask);
-        mScreenMaskView.setVisibility(View.VISIBLE);
-
-        // setting loading animation view
-        mLoadingAnimationView = view.findViewById(R.id.animation_view_loading);
-        // animation file
-        mLoadingAnimationView.setAnimation("load-animation.json");
-        // speed
-        mLoadingAnimationView.setSpeed(1);
-        mLoadingAnimationView.playAnimation();
-        // setting loading button
-        mLoadingMoreButton = view.findViewById(R.id.button_loading_more);
-        mLoadingMoreButton.setVisibility(View.GONE);
-        // Publish FAB
-        mPublishFab = view.findViewById(R.id.fab_publish);
-        mPublishFab.hide();
-        mIsScrollToTop = false;
-        // setting FAB onClick event
-        mPublishFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCardListRecyclerView != null) {
-                    // TODO: define some events
-                }
-            }
-        });
-        // cardList
-        mCardListRecyclerView = view.findViewById(R.id.recycler_view_card_list);
-        mCardListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!recyclerView.canScrollVertically(1)) { //1 for down
-                    try {
-                        loadMoreNews();
-                        mScreenMaskView.setVisibility(View.VISIBLE);
-                        mLoadingMoreButton.setVisibility(View.VISIBLE);
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (dy < 0) {
-                    mPublishFab.hide();
-                }
-                else if (dy > 0) {
-                    mPublishFab.show();
-                }
-            }
-        });
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mCardListRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mCardListLayoutManager = new LinearLayoutManager(getContext());
-        mCardListRecyclerView.setLayoutManager(mCardListLayoutManager);
-
-        // specify an adapter and pass in our data model list
-        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
-        mCardListRecyclerView.setAdapter(mCardListAdapter);
-
-        mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);
-        mCardListRefreshLayout.setOnRefreshListener(new CircleRefreshLayout.OnCircleRefreshListener() {
-            @Override
-            public void completeRefresh() {
-
-            }
-
-            @Override
-            public void refreshing() throws IOException, JSONException {
-                refreshNews();
-                mScreenMaskView.setVisibility(View.VISIBLE);
-            }
-        });
-
-        TextView mSectionLabelTextView = view.findViewById(R.id.text_view_section_label);
-
-            try {
-                // init
-                getInitNews();
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-
-        mPageViewModel.getCategory().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                mSectionLabelTextView.setText(s);
-            }
-        });
-
-        return view;
     }
 
     // render the recycler view card list when init and refreshing
@@ -286,8 +186,6 @@ public class NewsChannelFragment extends Fragment {
         mLoadingAnimationView.setVisibility(View.GONE);
         mScreenMaskView.setVisibility(View.GONE);
         mCardListRefreshLayout.finishRefreshing();
-//        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
-//        mCardListRecyclerView.setAdapter(mCardListAdapter);
         mCardListAdapter.notifyDataSetChanged();
 
         mIsRefresh = false;
@@ -395,13 +293,145 @@ public class NewsChannelFragment extends Fragment {
         return sb.toString();
     }
 
+
+    /**
+     * running on main UI thread to render card list
+     */
+//    private void runThread() {
+//        Handler handler = new Handler(Looper.getMainLooper());
+//
+//        new Thread() {
+//            public void run() {
+//                if(mIsLoadMore) {
+//                    // load more
+//                    handler.post(() -> loadMoreRenderCardList());
+//                } else if(mIsLoadingFail) {
+//                    // fail
+//                    handler.post(() -> loadingFail());
+//                } else {
+//                    // init & refresh
+//                    handler.post(() -> initRenderCardList());
+//                }
+//            }
+//        }.start();
+//    }
+
+
+    private final Handler mHander = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            if (msg.what == INIT_OR_REFRESH) {
+                initRenderCardList();
+            } else if (msg.what == LOAD_MORE) {
+                loadMoreRenderCardList();
+            } else if (msg.what == LOAD_FAIL) {
+                loadingFail();
+            }
+            return false;
+        }
+    });
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_news_channel, container, false);
+
+        // screen mask show when loading
+        mScreenMaskView = view.findViewById(R.id.view_screen_mask);
+        mScreenMaskView.setVisibility(View.VISIBLE);
+
+        // setting loading animation view
+        mLoadingAnimationView = view.findViewById(R.id.animation_view_loading);
+        // animation file
+        mLoadingAnimationView.setAnimation("load-animation.json");
+        // speed
+        mLoadingAnimationView.setSpeed(1);
+        mLoadingAnimationView.playAnimation();
+        // setting loading button
+        mLoadingMoreButton = view.findViewById(R.id.button_loading_more);
+        mLoadingMoreButton.setVisibility(View.GONE);
+        // Publish FAB
+        mPublishFab = view.findViewById(R.id.fab_publish);
+        mPublishFab.hide();
+        mIsScrollToTop = false;
+        // setting FAB onClick event
+        mPublishFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCardListRecyclerView != null) {
+                    // TODO: define some events
+                }
+            }
+        });
+        // cardList
+        mCardListRecyclerView = view.findViewById(R.id.recycler_view_card_list);
+        mCardListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull @NotNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!recyclerView.canScrollVertically(1)) { //1 for down
+                    loadMoreNews();
+                    mScreenMaskView.setVisibility(View.VISIBLE);
+                    mLoadingMoreButton.setVisibility(View.VISIBLE);
+                }
+                if (dy < 0) {
+                    mPublishFab.hide();
+                } else if (dy > 0) {
+                    mPublishFab.show();
+                }
+            }
+        });
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mCardListRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mCardListLayoutManager = new LinearLayoutManager(getContext());
+        mCardListRecyclerView.setLayoutManager(mCardListLayoutManager);
+
+        // specify an adapter and pass in our data model list
+        mCardListAdapter = new NewsCardAdapter(mCardDataModelList, getContext());
+        mCardListRecyclerView.setAdapter(mCardListAdapter);
+
+        mCardListRefreshLayout = view.findViewById(R.id.refresh_layout_card_list);
+        mCardListRefreshLayout.setOnRefreshListener(new CircleRefreshLayout.OnCircleRefreshListener() {
+            @Override
+            public void completeRefresh() {
+
+            }
+
+            @Override
+            public void refreshing() throws IOException, JSONException {
+                refreshNews();
+                mScreenMaskView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        TextView mSectionLabelTextView = view.findViewById(R.id.text_view_section_label);
+
+        // init
+        getInitNews();
+
+        mPageViewModel.getCategory().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                mSectionLabelTextView.setText(s);
+            }
+        });
+
+        return view;
+    }
+
     /**
      * a methods to init card list
-     *
-     * @throws IOException
-     * @throws JSONException
      */
-    public void getInitNews() throws IOException, JSONException {
+    public void getInitNews() {
         // init data
         mNewsDataModelList.clear();
         mCardDataModelList.clear();
@@ -438,11 +468,8 @@ public class NewsChannelFragment extends Fragment {
 
     /**
      * a methods to refresh card list
-     *
-     * @throws IOException
-     * @throws JSONException
      */
-    public void refreshNews() throws IOException, JSONException {
+    public void refreshNews() {
         // init data
         mIsRefresh = true;
         mNewsDataModelList.clear();
@@ -479,11 +506,8 @@ public class NewsChannelFragment extends Fragment {
 
     /**
      * a methods to load more card list items
-     *
-     * @throws IOException
-     * @throws JSONException
      */
-    public void loadMoreNews() throws IOException, JSONException {
+    public void loadMoreNews() {
         // init data
         mIsLoadMore = true;
         mNewsDataModelList.clear();
@@ -521,85 +545,66 @@ public class NewsChannelFragment extends Fragment {
      */
     public void dealWithResponseBody(String jsonData) {
         // avoid that jsonData is null
-        if(jsonData.length() < 1) {
+        if (jsonData.length() < 1) {
             mIsLoadingFail = true;
             // run on main ui thread
-            runThread();
+            // runThread();
+            mHander.sendEmptyMessage(LOAD_FAIL);
             return;
         }
-        Log.v("deal with response", "string to JsonObject");
-        Log.v("deal with response", "json data\n" + jsonData);
+        Log.v(RES_BODY_TAG, "string to JsonObject");
+        Log.v(RES_BODY_TAG, "json data\n" + jsonData);
         JsonObject result = JsonParser.parseString(jsonData).getAsJsonObject();
-        Log.v("deal with response", "result, before max_behot_time " + mMaxBehotTime);
-        Log.v("deal with response", String.valueOf(result.getAsJsonObject("next").has("max_behot_time")));
+        Log.v(RES_BODY_TAG, "result, before max_behot_time " + mMaxBehotTime);
+        Log.v(RES_BODY_TAG, String.valueOf(result.getAsJsonObject("next").has("max_behot_time")));
         mMaxBehotTime = result.getAsJsonObject("next").get("max_behot_time").getAsInt();
-        Log.v("deal with response", "After max_behot_time : " + mMaxBehotTime + " get news object");
+        Log.v(RES_BODY_TAG, "After max_behot_time : " + mMaxBehotTime + " get news object");
         JsonArray newsData = result.getAsJsonArray("data");
         for (int i = 0; i < newsData.size(); i++) {
-            Log.v("deal with response", "newsObjects " + i);
-            try {
-                dealWithNewsObject(newsData.get(i).getAsJsonObject());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Log.v(RES_BODY_TAG, "newsObjects " + i);
+            dealWithNewsObject(newsData.get(i).getAsJsonObject());
         }
-        runThread();
-    }
-
-    /**
-     * running on main UI thread to render card list
-     */
-    private void runThread() {
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        new Thread() {
-            public void run() {
-                if(mIsLoadMore) {
-                    // load more
-                    handler.post(() -> loadMoreRenderCardList());
-                } else if(mIsLoadingFail) {
-                    // fail
-                    handler.post(() -> loadingFail());
-                } else {
-                    // init & refresh
-                    handler.post(() -> initRenderCardList());
-                }
-            }
-        }.start();
+        // runThread();
+        if (mIsLoadMore) {
+            // load more
+            mHander.sendEmptyMessage(LOAD_MORE);
+        } else {
+            // init & refresh
+            mHander.sendEmptyMessage(INIT_OR_REFRESH);
+        }
     }
 
     /**
      * a methods to transfer JsonObject to NewsDataModel
      *
      * @param object
-     * @throws JSONException
      */
-    public void dealWithNewsObject(JsonObject object) throws JSONException {
+    public void dealWithNewsObject(JsonObject object) {
         NewsDataModel temp;
         // id
-        Log.v("deal with news object", "news_id " + object.get("group_id").getAsString());
+        Log.v(NEWS_OBJECT_TAG, "news_id " + object.get("group_id").getAsString());
         String newsId = object.get("group_id").getAsString();
         // title
-        Log.v("deal with news object", "news_title " + object.get("title").getAsString());
+        Log.v(NEWS_OBJECT_TAG, "news_title " + object.get("title").getAsString());
         String newsTitle = object.get("title").getAsString();
         // remove \r \n \t
         newsTitle = newsTitle.replaceAll("\r|\n|\t", "");
         // abstract
         String newsAbstract = newsTitle;
-        Log.v("deal with news object", "news_abstract " + object.has("abstract"));
+        Log.v(NEWS_OBJECT_TAG, "news_abstract " + object.has("abstract"));
         if (object.has("abstract")) {
             newsAbstract = object.get("abstract").getAsString();
             // remove \r \n \t
             newsAbstract = newsAbstract.replaceAll("\r|\n|\t", "");
         }
         // comments count
-        Log.v("deal with news object", "news_comments_count " + object.has("comments_count"));
+        Log.v(NEWS_OBJECT_TAG, "news_comments_count " + object.has("comments_count"));
         int newsCommentsCount = 0;
         if (object.has("comments_count")) {
             newsCommentsCount = object.get("comments_count").getAsInt();
         }
         // news source
-        Log.v("deal with news object", "news_source " + object.get("source").getAsString());
+        Log.v(NEWS_OBJECT_TAG, "news_source " + object.get("source").getAsString());
         String newsSource = object.get("source").getAsString();
         // news media avatar url
         String newsMediaAvatarUrl = DEFAULT_AVATAR;
@@ -607,18 +612,18 @@ public class NewsChannelFragment extends Fragment {
             newsMediaAvatarUrl = "https:" + object.get("media_avatar_url").getAsString();
         }
         // news source url
-        Log.v("deal with news object", "news_source_url " + object.get("source_url").getAsString());
+        Log.v(NEWS_OBJECT_TAG, "news_source_url " + object.get("source_url").getAsString());
         String newsSourceUrl = object.get("source_url").getAsString();
 
-        Log.v("deal with news object", "have image_list " + object.has("image_list"));
-        Log.v("deal with news object", "single_mode " + object.get("single_mode").getAsBoolean());
+        Log.v(NEWS_OBJECT_TAG, "have image_list " + object.has("image_list"));
+        Log.v(NEWS_OBJECT_TAG, "single_mode " + object.get("single_mode").getAsBoolean());
         // three image style
         if (object.has("image_list")) {
             JsonArray imageList = object.get("image_list").getAsJsonArray();
             ArrayList<String> newsThreeImage = new ArrayList<>();
 
             // the Json Array is not null
-            if(imageList.size() < 3) {
+            if (imageList.size() < 3) {
                 for (int i = 0; i < 3; i++) {
                     // avoid url is null
                     newsThreeImage.add(DEFAULT_IMAGE);
@@ -627,7 +632,7 @@ public class NewsChannelFragment extends Fragment {
                 for (int i = 0; i < 3; i++) {
                     // avoid url is null
                     String url = imageList.get(i).getAsJsonObject().get("url").getAsString();
-                    if(url.length() == 0) {
+                    if (url.length() == 0) {
                         url = DEFAULT_IMAGE;
                     } else {
                         url = "https:" + url;
