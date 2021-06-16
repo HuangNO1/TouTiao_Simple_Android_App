@@ -9,5 +9,26 @@
         android:id="@+id/searchHotEventFragment"
         android:name="com.example.toutiao.ui.page.searchHotEvent.SearchHotEventFragment"
         android:label="fragment_search_hot_event"
-        tools:layout="@layout/fragment_search_hot_event" />
+        tools:layout="@layout/fragment_search_hot_event" >
+        <action
+            android:id="@+id/action_searchHotEventFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment"
+            app:enterAnim="@animator/slide_in_right"
+            app:exitAnim="@animator/slide_out_left"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchResultFragment"
+        android:name="com.example.toutiao.ui.page.searchResult.SearchResultFragment"
+        android:label="fragment_search_result"
+        tools:layout="@layout/fragment_search_result" >
+        <action
+            android:id="@+id/action_searchResultFragment_to_searchHotEventFragment"
+            app:destination="@id/searchHotEventFragment"
+            app:enterAnim="@animator/slide_in_left"
+            app:exitAnim="@animator/slide_out_right"/>
+        <action
+            android:id="@+id/action_searchResultFragment_self"
+            app:destination="@id/searchResultFragment"/>
+    </fragment>
 </navigation>
