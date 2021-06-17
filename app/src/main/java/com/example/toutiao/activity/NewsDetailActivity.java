@@ -165,7 +165,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        // super.onBackPressed();
         if (mNewsDetailWebView.canGoBack()) {
             mNewsDetailWebView.goBack();
         } else {
